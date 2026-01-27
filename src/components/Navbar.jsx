@@ -3,6 +3,7 @@ function Navbar({ streak, freezeCount, docked, onOpenSettings }) {
     <header style={styles.nav}>
       {/* Logo */}
       <div
+        title="Home"
         style={styles.navItem}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
@@ -11,6 +12,7 @@ function Navbar({ streak, freezeCount, docked, onOpenSettings }) {
 
       {/* Workouts shortcut */}
       <div
+        title="Workouts"
         style={styles.navItem}
         onClick={() => {
           const el = document.getElementById("workout");
@@ -40,7 +42,7 @@ function Navbar({ streak, freezeCount, docked, onOpenSettings }) {
       </div>
 
       {/* Settings */}
-      <div style={styles.navItem} onClick={onOpenSettings}>
+      <div title="Settings" style={styles.navItem} onClick={onOpenSettings}>
         ⚙️
       </div>
     </header>
@@ -62,19 +64,6 @@ const styles = {
     backgroundColor: "var(--bg)",
     borderBottom: "1px solid var(--border)",
   },
-  leftIcon: {
-    fontSize: "30px",
-  },
-  navIcon: {
-    fontSize: "23px",
-  },
-  center: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "12px",
-    fontWeight: 600,
-  },
   streak: {
     fontSize: "25px",
     fontWeight: 700,
@@ -82,23 +71,6 @@ const styles = {
   fire: {
     fontSize: "20px",
   },
-  right: {
-    fontSize: "23px",
-  },
-  streakBlock: {
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-},
-
-freezeBlock: {
-  marginLeft: "8px",
-  fontSize: "25px",
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-},
-
 navItem: {
   display: "flex",
   alignItems: "center",

@@ -1,27 +1,50 @@
 import { toDateKey, isSunday } from "../utils/dateUtils";
+import { useState } from "react";
 
-function CalendarOverlay({ visible, onClose, dayRecords }) {
+
+function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility }) {
   if (!visible) return null;
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+   const [viewDate, setViewDate] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d;
+    });
 
-  const firstDay = new Date(year, month, 1);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+
   const lastDay = new Date(year, month + 1, 0);
-
   const days = [];
+
   for (let d = 1; d <= lastDay.getDate(); d++) {
     days.push(new Date(year, month, d));
   }
+
+  function prevMonth() {
+    setViewDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
+  }
+
+  function nextMonth() {
+    setViewDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
+  }
+
 
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.sheet} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
-          {today.toLocaleString("default", { month: "long" })} {year}
-        </div>
+          <button style={styles.navBtn} onClick={prevMonth}>‹</button>
 
+          <span>
+            {viewDate.toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            })}
+          </span>
+
+          <button style={styles.navBtn} onClick={nextMonth}>›</button>
+        </div>
         <div style={styles.grid}>
           {days.map((date) => {
             const key = toDateKey(date);
@@ -36,6 +59,12 @@ function CalendarOverlay({ visible, onClose, dayRecords }) {
                 ? styles.freezeVisible
                 : styles.freezeSubtle;
             }            
+            if (record?.status === "blocked") {
+              cellStyle =
+                freezeVisibility === "visible"
+                  ? styles.blocked
+                  : styles.blockedSubtle;
+            }
             if (sunday) cellStyle = styles.sunday;
 
             return (
@@ -132,5 +161,33 @@ const styles = {
     background: "var(--cal-sunday)",
     opacity: 0.6, // 🔑 softened
   },
+
+  blocked: {
+    height: "40px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "8px",
+    background: "var(--cal-blocked)", // soft lavender
+  },
+
+  blockedSubtle: {
+    height: "40px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "8px",
+    background: "var(--cal-blocked-subtle)",
+    opacity: 0.6,
+  },
+
+  navBtn: {
+    background: "none",
+    border: "none",
+    fontSize: "20px",
+    cursor: "pointer",
+    color: "var(--text)",
+  },
+
 };
 export default CalendarOverlay;

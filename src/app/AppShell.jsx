@@ -14,6 +14,8 @@ import InfoSection from "../components/InfoSection";
 import SettingsPanel from "../components/SettingsPanel";
 import { useStreakPreferences } from "../hooks/useStreakPreferences";
 import StreakPreferences from "../components/StreakPreferences";
+import WelcomeBack from "../components/WelcomeBack";
+import BlockDatesOverlay from "../components/BlockDatesOverlay";
 
 function AppShell() {
   // ---- streak / logging ----
@@ -24,6 +26,8 @@ function AppShell() {
     freezeCount,
     logToday,
     undoToday,
+    blockDates,
+    unblockDate,
   } = useDayRecords();
 
   // ---- workouts ----
@@ -41,6 +45,49 @@ function AppShell() {
   const { freezeVisibility, setFreezeVisibility } = useStreakPreferences();
 
   const [docked, setDocked] = useState(false);
+  const [welcomePhase, setWelcomePhase] = useState("intro");
+  const [blockPickerOpen, setBlockPickerOpen] = useState(false);
+  
+  const styles = {
+    blockSection: {
+      padding: "16px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "12px",
+      borderTop: "1px solid var(--border)",
+      marginTop: "16px",
+    },
+
+    blockTitle: {
+      fontWeight: 600,
+      marginBottom: "4px",
+    },
+
+    blockDesc: {
+      fontSize: "14px",
+      opacity: 0.7,
+    },
+
+    blockButton: {
+      padding: "8px 12px",
+      borderRadius: "8px",
+      border: "1px solid var(--border)",
+      background: "transparent",
+      color: "var(--text)",
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+    },
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setWelcomePhase("docked");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
 
   useEffect(() => {
     const onScroll = () => {
@@ -60,6 +107,7 @@ function AppShell() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
      
+     <WelcomeBack />
       
        <div id="page-content"></div>
       {/* Streak hero (tap to open calendar) */}
@@ -92,12 +140,37 @@ function AppShell() {
         />
       )}
 
+      <section style={styles.blockSection}>
+        <div>
+          <div style={styles.blockTitle}>Planned time off</div>
+          <div style={styles.blockDesc}>
+            Going to be away or unable to train?
+            Block dates ahead of time so your streak isn’t affected. (Must be after 48 hours)
+          </div>
+        </div>
+
+        <button
+          style={styles.blockButton}
+          onClick={() => setBlockPickerOpen(true)}
+        >
+          Block dates
+        </button>
+      </section>
+
       {/* Calendar overlay */}
       <CalendarOverlay
         visible={calendarOpen}
         onClose={() => setCalendarOpen(false)}
         dayRecords={dayRecords}
         freezeVisibility={freezeVisibility}
+      />
+
+      <BlockDatesOverlay
+        visible={blockPickerOpen}
+        onClose={() => setBlockPickerOpen(false)}
+         dayRecords={dayRecords}
+          onBlock={blockDates}
+          onUnblock={unblockDate}
       />
 
       {settingsOpen && (

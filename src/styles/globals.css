@@ -12,6 +12,10 @@
   --cal-freeze-visible: rgba(255, 255, 255, 0.35);
   --cal-freeze-subtle: rgba(255, 255, 255, 0.15);
 
+  --cal-blocked: #b9a7ff;
+  --cal-blocked-subtle: #3a3a3a;
+
+
   --cal-sunday: rgba(255, 255, 255, 0.08);
 }
 

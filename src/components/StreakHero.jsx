@@ -44,11 +44,9 @@ const styles = {
     fontSize: "64px",
     fontWeight: 700,
     lineHeight: 1,
-    animation: "tick 180ms ease-out",
   },
   fire: {
     fontSize: "40px",
-    animation: "fadeIn 200ms ease-out",
   },
   label: {
     marginTop: "8px",
