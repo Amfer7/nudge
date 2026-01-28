@@ -55,7 +55,7 @@ const styles = {
   nav: {
     position: "sticky",
     top: 0,
-    zIndex: 10,
+    zIndex: 500,
     height: "56px",
     padding: "0 20px",
     display: "grid",

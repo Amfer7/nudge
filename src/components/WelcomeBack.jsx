@@ -3,18 +3,27 @@ import { useEffect, useState } from "react";
 
 function WelcomeBack() {
   const [phase, setPhase] = useState("intro"); 
+  const isIntro = phase === "intro";
   // "intro" → big overlay
   // "docked" → small label under navbar
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setPhase("docked");
-    }, 2000);
+    const t1 = setTimeout(() => setPhase("docking"), 750);
+    const t2 = setTimeout(() => setPhase("settled"), 750); // after animation
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
-  const isIntro = phase === "intro";
+
+  const styleForPhase =
+    phase === "intro"
+      ? styles.intro
+      : phase === "docking"
+      ? styles.docked
+      : styles.settled;
 
   return (
     <>
@@ -22,10 +31,10 @@ function WelcomeBack() {
       {isIntro && <div style={styles.backdrop} />}
 
       {/* Text */}
-      <div
+     <div
         style={{
           ...styles.text,
-          ...(isIntro ? styles.intro : styles.docked),
+          ...styleForPhase,
         }}
       >
         Welcome back!
@@ -68,10 +77,20 @@ const styles = {
     docked: {
     position: "fixed", // 🔑 stays fixed
     top: "56px",       // navbar height
-    left: "16px",      // final anchor
+    left: "-20px",      // final anchor
     transform: "translate(0, 0) scale(0.6)", // 🔑 no re-centering math
-    fontSize: "24px",
+    fontSize: "28px",
     opacity: 0.9,
+    },
+
+    
+    settled: {
+      position: "relative",     // 🔑 participates in layout
+      marginTop: "10px",
+      marginLeft: "16px",
+      fontSize: "20px",
+      opacity: 0.7,
+      transform: "none",
     },
 };
 

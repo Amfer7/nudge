@@ -28,6 +28,7 @@ function AppShell() {
     undoToday,
     blockDates,
     unblockDate,
+    logDate, // TEST HELPER
   } = useDayRecords();
 
   // ---- workouts ----
@@ -121,6 +122,30 @@ function AppShell() {
         onLog={logToday}
         onUndo={undoToday}
       />
+
+      {/* TEST HELPER - Remove in production
+      <div style={{ textAlign: 'center', marginTop: '12px' }}>
+        <button
+          style={{
+            padding: '8px 12px',
+            fontSize: '12px',
+            opacity: 0.5,
+            border: '1px solid var(--border)',
+            borderRadius: '6px',
+            background: 'transparent',
+            color: 'var(--text)',
+            cursor: 'pointer',
+          }}
+          onClick={() => {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+            logDate(yesterdayKey);
+          }}
+        >
+          [TEST] Log Yesterday
+        </button>
+      </div> */}
 
       {/* Weekly workout planner */}
       <WeeklyWorkoutSection
