@@ -1,13 +1,24 @@
 import { APP_NAME } from "../app/version";
 
-function Navbar({ streak, freezeCount, docked, onOpenSettings }) {
+function Navbar({ streak, freezeCount, docked, scrollProgress = 0, onOpenSettings }) {
+  const bgOpacity = scrollProgress;
+  const blurPx = 8 * scrollProgress;
+  const shadowOpacity = 0.18 * scrollProgress;
+
   return (
     <header
       style={{
         ...styles.nav,
-        ...(docked ? styles.navDocked : {}),
+        backdropFilter: `blur(${blurPx}px)`,
+        boxShadow: `0 6px 16px rgba(0, 0, 0, ${shadowOpacity})`,
       }}
     >
+      <div
+        style={{
+          ...styles.navBg,
+          opacity: bgOpacity,
+        }}
+      />
       <div style={styles.inner}>
         <button
           title="Home"
@@ -60,14 +71,19 @@ const styles = {
     zIndex: 500,
     width: "100%",
     background: "transparent",
-    transition: "background 220ms ease, backdrop-filter 220ms ease, box-shadow 220ms ease",
+    transition: "backdrop-filter 120ms linear, box-shadow 120ms linear",
+    overflow: "hidden",
   },
-  navDocked: {
+  navBg: {
+    position: "absolute",
+    inset: 0,
     background: "var(--nav-scroll-bg)",
-    backdropFilter: "blur(8px)",
-    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.18)",
+    pointerEvents: "none",
+    transition: "opacity 120ms linear",
   },
   inner: {
+    position: "relative",
+    zIndex: 1,
     width: "100%",
     maxWidth: "760px",
     margin: "0 auto",

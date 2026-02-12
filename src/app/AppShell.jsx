@@ -52,6 +52,7 @@ function AppShell() {
   const { freezeVisibility, setFreezeVisibility } = useStreakPreferences();
 
   const [docked, setDocked] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [blockPickerOpen, setBlockPickerOpen] = useState(false);
   
   const styles = {
@@ -109,9 +110,12 @@ function AppShell() {
 
   useEffect(() => {
     const onScroll = () => {
-      setDocked(window.scrollY > 80);
+      const progress = Math.max(0, Math.min(1, window.scrollY / 120));
+      setScrollProgress(progress);
+      setDocked(progress > 0.7);
     };
     window.addEventListener("scroll", onScroll);
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -122,6 +126,7 @@ function AppShell() {
         streak={currentStreak}
         freezeCount={freezeCount}
         docked={docked}
+        scrollProgress={scrollProgress}
         onOpenSettings={() => setSettingsOpen(true)}
       />
      <main style={styles.page}>
@@ -130,7 +135,7 @@ function AppShell() {
        <div id="page-content"></div>
       {/* Streak hero (tap to open calendar) */}
       <div onClick={() => setCalendarOpen(true)}>
-        <StreakHero streak={currentStreak} docked={docked} />
+        <StreakHero streak={currentStreak} docked={docked} scrollProgress={scrollProgress} />
       </div>
 
       {/* Primary habit action */}

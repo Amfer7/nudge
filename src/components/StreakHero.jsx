@@ -1,14 +1,17 @@
-function StreakHero({ streak, docked }) {
+function StreakHero({ streak, docked, scrollProgress = 0 }) {
   const showFire = streak >= 2;
+  const heroScale = 1 - 0.12 * scrollProgress;
+  const heroOpacity = 1 - scrollProgress;
+  const heroTranslateY = -16 * scrollProgress;
 
   return (
     <div style={styles.outer}>
       <div
         style={{
           ...styles.container,
-          transform: docked ? "scale(0.88)" : "scale(1)",
-          opacity: docked ? 0 : 1,
-          transition: "transform 220ms ease, opacity 180ms ease",
+          transform: `translateY(${heroTranslateY}px) scale(${heroScale})`,
+          opacity: docked ? 0 : heroOpacity,
+          transition: "transform 120ms linear, opacity 120ms linear",
         }}
       >
         <div style={styles.streakRow}>
