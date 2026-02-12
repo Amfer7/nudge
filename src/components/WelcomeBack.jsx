@@ -1,97 +1,47 @@
-// src/components/WelcomeBack.jsx
-import { useEffect, useState } from "react";
-
-function WelcomeBack() {
-  const [phase, setPhase] = useState("intro"); 
-  const isIntro = phase === "intro";
-  // "intro" → big overlay
-  // "docked" → small label under navbar
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase("docking"), 750);
-    const t2 = setTimeout(() => setPhase("settled"), 750); // after animation
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, []);
-
-
-  const styleForPhase =
-    phase === "intro"
-      ? styles.intro
-      : phase === "docking"
-      ? styles.docked
-      : styles.settled;
-
+function WelcomeBack({ isLogged = false }) {
   return (
-    <>
-      {/* Backdrop */}
-      {isIntro && <div style={styles.backdrop} />}
-
-      {/* Text */}
-     <div
-        style={{
-          ...styles.text,
-          ...styleForPhase,
-        }}
-      >
-        Welcome back!
+    <div style={styles.wrap}>
+      <div style={styles.badge}>
+        <span
+          style={{
+            ...styles.dot,
+            background: isLogged ? "var(--primary-solid)" : "var(--accent-energy)",
+            boxShadow: isLogged
+              ? "0 0 14px var(--primary-solid)"
+              : "0 0 14px var(--accent-energy)",
+          }}
+        />
+        Welcome back
       </div>
-    </>
+    </div>
   );
 }
 
 const styles = {
-  backdrop: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.35)",
-    backdropFilter: "blur(4px)",
-    zIndex: 250,
+  wrap: {
+    padding: "12px 16px 2px",
   },
-
-  text: {
+  badge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "10px 14px",
+    borderRadius: "999px",
+    border: "1px solid var(--border)",
+    background:
+      "linear-gradient(130deg, rgba(56, 255, 150, 0.16), var(--accent-energy-soft))",
+    fontSize: "17px",
     fontWeight: 700,
-    letterSpacing: "-0.02em",
-    transition:
-      "transform 700ms cubic-bezier(0.22, 1, 0.36, 1), " +
-      "opacity 400ms ease, " +
-      "top 700ms cubic-bezier(0.22, 1, 0.36, 1), " +
-      "left 700ms cubic-bezier(0.22, 1, 0.36, 1)",
     color: "var(--text)",
-    zIndex: 260,
-    pointerEvents: "none", // never blocks interaction
+    boxShadow: "0 10px 18px rgba(0, 0, 0, 0.18)",
+    animation: "welcomeBounceInLeft 920ms cubic-bezier(0.2, 0.95, 0.2, 1)",
   },
-
-    intro: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%) scale(1)",
-    fontSize: "48px",
-    opacity: 1,
-    },
-
-    docked: {
-    position: "fixed", // 🔑 stays fixed
-    top: "56px",       // navbar height
-    left: "-20px",      // final anchor
-    transform: "translate(0, 0) scale(0.6)", // 🔑 no re-centering math
-    fontSize: "28px",
-    opacity: 0.9,
-    },
-
-    
-    settled: {
-      position: "relative",     // 🔑 participates in layout
-      marginTop: "10px",
-      marginLeft: "16px",
-      fontSize: "20px",
-      opacity: 0.7,
-      transform: "none",
-    },
+  dot: {
+    width: "10px",
+    height: "10px",
+    borderRadius: "50%",
+    animation: "pulseDot 1.8s ease-in-out infinite",
+  },
 };
 
 export default WelcomeBack;

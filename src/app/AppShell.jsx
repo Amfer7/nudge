@@ -16,6 +16,8 @@ import { useStreakPreferences } from "../hooks/useStreakPreferences";
 import StreakPreferences from "../components/StreakPreferences";
 import WelcomeBack from "../components/WelcomeBack";
 import BlockDatesOverlay from "../components/BlockDatesOverlay";
+import WhatsNewCard from "../components/WhatsNewCard";
+import { APP_NAME, APP_VERSION } from "./version";
 
 function AppShell() {
   // ---- streak / logging ----
@@ -28,7 +30,11 @@ function AppShell() {
     undoToday,
     blockDates,
     unblockDate,
-    logDate, // TEST HELPER
+    resetProgress,
+    dayOffset,
+    setDayOffset,
+    todayKey,
+    devSummary,
   } = useDayRecords();
 
   // ---- workouts ----
@@ -46,18 +52,29 @@ function AppShell() {
   const { freezeVisibility, setFreezeVisibility } = useStreakPreferences();
 
   const [docked, setDocked] = useState(false);
-  const [welcomePhase, setWelcomePhase] = useState("intro");
   const [blockPickerOpen, setBlockPickerOpen] = useState(false);
   
   const styles = {
+    root: {
+      minHeight: "100vh",
+    },
+    page: {
+      maxWidth: "760px",
+      margin: "0 auto",
+      position: "relative",
+      width: "100%",
+    },
     blockSection: {
-      padding: "16px",
+      padding: "14px",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       gap: "12px",
-      borderTop: "1px solid var(--border)",
-      marginTop: "16px",
+      border: "1px solid var(--border)",
+      borderRadius: "14px",
+      background: "var(--card)",
+      margin: "8px 16px 0",
+      boxShadow: "0 8px 16px rgba(0, 0, 0, 0.18)",
     },
 
     blockTitle: {
@@ -67,28 +84,28 @@ function AppShell() {
 
     blockDesc: {
       fontSize: "14px",
-      opacity: 0.7,
+      color: "var(--text-muted)",
     },
 
     blockButton: {
       padding: "8px 12px",
       borderRadius: "8px",
-      border: "1px solid var(--border)",
-      background: "transparent",
+      border: "1px solid rgba(45, 255, 196, 0.35)",
+      background: "rgba(45, 255, 196, 0.08)",
       color: "var(--text)",
       cursor: "pointer",
       whiteSpace: "nowrap",
+      fontWeight: 600,
+    },
+    footer: {
+      marginTop: "14px",
+      padding: "10px 16px 20px",
+      borderTop: "1px solid var(--border)",
+      fontSize: "11px",
+      color: "var(--text-muted)",
+      textAlign: "left",
     },
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setWelcomePhase("docked");
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
 
   useEffect(() => {
     const onScroll = () => {
@@ -100,15 +117,15 @@ function AppShell() {
 
 
   return (
-    <div>
+    <div style={styles.root}>
        <Navbar
         streak={currentStreak}
         freezeCount={freezeCount}
         docked={docked}
         onOpenSettings={() => setSettingsOpen(true)}
       />
-     
-     <WelcomeBack />
+     <main style={styles.page}>
+      <WelcomeBack isLogged={todayStatus === "logged"} />
       
        <div id="page-content"></div>
       {/* Streak hero (tap to open calendar) */}
@@ -122,6 +139,71 @@ function AppShell() {
         onLog={logToday}
         onUndo={undoToday}
       />
+
+      {import.meta.env.DEV && (
+      <div
+        style={{
+          margin: "16px 16px 8px",
+          padding: "12px",
+          border: "1px dashed rgba(45, 255, 196, 0.55)",
+          borderRadius: "12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          fontSize: "14px",
+          opacity: 0.9,
+          background: "rgba(11, 20, 36, 0.55)",
+        }}
+      >
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <span>DEV:</span>
+
+          <button onClick={() => setDayOffset(o => o - 7)}>
+            -7
+          </button>
+
+          <button onClick={() => setDayOffset(o => o - 1)}>
+            -1
+          </button>
+
+          <button onClick={() => setDayOffset(0)}>
+            Today
+          </button>
+
+          <button onClick={() => setDayOffset(o => o + 1)}>
+            +1
+          </button>
+
+          <button onClick={() => setDayOffset(o => o + 7)}>
+            +7
+          </button>
+
+          <button onClick={resetProgress}>
+            Reset
+          </button>
+
+          <span style={{ marginLeft: "auto" }}>
+            Simulated day: {todayKey} (offset {dayOffset >= 0 ? `+${dayOffset}` : dayOffset})
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+            gap: "6px 10px",
+            fontSize: "12px",
+            opacity: 0.85,
+          }}
+        >
+          <span>Status: {devSummary.todayStatus}</span>
+          <span>Streak: {devSummary.currentStreak}</span>
+          <span>Freezes: {devSummary.freezeCount}</span>
+          <span>Earn ready: {devSummary.eligibleForFreezeEarn ? "yes" : "no"}</span>
+          <span>Spend target: {devSummary.freezeSpendCandidate ?? "none"}</span>
+        </div>
+      </div>
+    )}
 
       {/* TEST HELPER - Remove in production
       <div style={{ textAlign: 'center', marginTop: '12px' }}>
@@ -205,12 +287,20 @@ function AppShell() {
             freezeVisibility={freezeVisibility}
             onChange={setFreezeVisibility}
           />
+          <WhatsNewCard />
           <InfoSection />
         </SettingsPanel>
       )}
 
+      <footer style={styles.footer}>
+        {APP_NAME} {APP_VERSION}
+      </footer>
+     </main>
     </div>
+    
   );
+  
 }
 
 export default AppShell;
+

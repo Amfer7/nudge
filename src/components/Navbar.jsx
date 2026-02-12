@@ -1,85 +1,113 @@
+import { APP_NAME } from "../app/version";
+
 function Navbar({ streak, freezeCount, docked, onOpenSettings }) {
   return (
-    <header style={styles.nav}>
-      {/* Logo */}
-      <div
-        title="Home"
-        style={styles.navItem}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      >
-        🏋️
-      </div>
+    <header
+      style={{
+        ...styles.nav,
+        ...(docked ? styles.navDocked : {}),
+      }}
+    >
+      <div style={styles.inner}>
+        <button
+          title="Home"
+          style={{ ...styles.navItem, ...styles.brand }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          {APP_NAME}
+        </button>
 
-      {/* Workouts shortcut */}
-      <div
-        title="Workouts"
-        style={styles.navItem}
-        onClick={() => {
-          const el = document.getElementById("workout");
-          el?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }}
-      >
-        💪
-      </div>
+        <button
+          title="Workouts"
+          style={styles.navItem}
+          onClick={() => {
+            const el = document.getElementById("workout");
+            el?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+        >
+          💪
+        </button>
 
-      {/* Streak */}
-     <div
-        style={{
-          ...styles.navItem,
-          opacity: docked ? 1 : 0,
-          transform: docked ? "translateY(0)" : "translateY(6px)",
-          transition: "opacity 180ms ease, transform 180ms ease",
-          pointerEvents: docked ? "auto" : "none",
-        }}
-      >
-        <span style={styles.streak}>{streak}</span>
-        {streak >= 2 && <span>🔥</span>}
-      </div>
+        <div
+          style={{
+            ...styles.navItem,
+            opacity: docked ? 1 : 0,
+            transform: docked ? "translateY(0)" : "translateY(6px)",
+            transition: "opacity 180ms ease, transform 180ms ease",
+            pointerEvents: docked ? "auto" : "none",
+          }}
+        >
+          <span style={styles.streak}>{streak}</span>
+          {streak >= 2 && <span>🔥</span>}
+        </div>
 
-      {/* Freezes */}
-      <div style={styles.navItem}>
-        ❄️ {freezeCount}
-      </div>
+        <div style={{ ...styles.navItem, ...styles.freeze }}>
+          ❄️ {freezeCount}
+        </div>
 
-      {/* Settings */}
-      <div title="Settings" style={styles.navItem} onClick={onOpenSettings}>
-        ⚙️
+        <button title="Settings" style={styles.navItem} onClick={onOpenSettings}>
+          ⚙️
+        </button>
       </div>
     </header>
   );
 }
-
-
 
 const styles = {
   nav: {
     position: "sticky",
     top: 0,
     zIndex: 500,
-    height: "56px",
-    padding: "0 20px",
+    width: "100%",
+    background: "transparent",
+    transition: "background 220ms ease, backdrop-filter 220ms ease, box-shadow 220ms ease",
+  },
+  navDocked: {
+    background: "var(--nav-scroll-bg)",
+    backdropFilter: "blur(8px)",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.18)",
+  },
+  inner: {
+    width: "100%",
+    maxWidth: "760px",
+    margin: "0 auto",
+    height: "62px",
+    padding: "0 12px",
     display: "grid",
-   gridTemplateColumns: "repeat(5, 1fr)", // 🔑 equal spacing
+    gridTemplateColumns: "repeat(5, 1fr)",
     alignItems: "center",
-    backgroundColor: "var(--bg)",
-    borderBottom: "1px solid var(--border)",
+    gap: "2px",
   },
   streak: {
     fontSize: "25px",
     fontWeight: 700,
   },
-  fire: {
+  navItem: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
     fontSize: "20px",
+    cursor: "pointer",
+    lineHeight: 1,
+    minHeight: "40px",
+    borderRadius: "8px",
+    background: "transparent",
+    border: "none",
   },
-navItem: {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center", // 🔑 equal centering
-  gap: "4px",
-  fontSize: "22px",
-  cursor: "pointer",
-  lineHeight: 1,
-},
+  brand: {
+    fontSize: "24px",
+    fontWeight: 700,
+    letterSpacing: "0.8px",
+    color: "var(--brand-color)",
+    textShadow: "var(--brand-shadow)",
+    textTransform: "uppercase",
+  },
+  freeze: {
+    fontWeight: 700,
+    color: "var(--freeze-color)",
+    textShadow: "var(--freeze-shadow)",
+  },
 };
 
 export default Navbar;

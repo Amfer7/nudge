@@ -35,10 +35,7 @@ function WeeklyWorkoutSection({
               <span style={styles.dayName}>
                 {day} {isToday && "(Today)"}
               </span>
-              <button
-                style={styles.editBtn}
-                onClick={() => onEditDay(idx)}
-              >
+              <button style={styles.editBtn} onClick={() => onEditDay(idx)}>
                 Edit
               </button>
             </div>
@@ -53,20 +50,12 @@ function WeeklyWorkoutSection({
                       key={i}
                       style={{
                         ...styles.item,
-                        opacity: done ? 0.5 : 1,
+                        ...(done ? styles.done : {}),
                         cursor: isToday ? "pointer" : "default",
                       }}
-                      onClick={
-                        isToday
-                          ? () => onToggleExercise(i)
-                          : undefined
-                      }
+                      onClick={isToday ? () => onToggleExercise(i) : undefined}
                     >
-                      {isToday && (
-                        <span style={styles.check}>
-                          {done ? "✓" : " "}
-                        </span>
-                      )}
+                      {isToday && <span style={styles.check}>{done ? "✓" : ""}</span>}
                       {ex}
                     </li>
                   );
@@ -84,56 +73,80 @@ function WeeklyWorkoutSection({
 
 const styles = {
   container: {
-    padding: "0 16px 32px",
-    marginTop: "32px",
+    padding: "0 16px 30px",
+    marginTop: "24px",
   },
   heading: {
     marginBottom: "12px",
     fontSize: "16px",
-    fontWeight: 600,
+    fontWeight: 700,
+    letterSpacing: "0.35px",
   },
   dayBlock: {
-    marginBottom: "16px",
-    padding: "12px",
-    borderRadius: "12px",
-    background: "rgba(255,255,255,0.03)",
+    marginBottom: "14px",
+    padding: "13px 12px",
+    borderRadius: "14px",
+    border: "1px solid var(--border)",
+    background: "var(--card)",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.2)",
   },
   today: {
-    background: "rgba(255,255,255,0.08)",
+    border: "1px solid rgba(56, 255, 150, 0.72)",
+    boxShadow: "var(--today-glow)",
   },
   dayHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "6px",
+    marginBottom: "8px",
   },
   dayName: {
-    fontWeight: 600,
+    fontWeight: 700,
     fontSize: "14px",
   },
   editBtn: {
-    fontSize: "13px",
-    opacity: 0.7,
-    textDecoration: "underline",
+    fontSize: "12px",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    color: "var(--edit-btn-text)",
+    border: "1px solid var(--border)",
+    borderRadius: "8px",
+    padding: "4px 8px",
+    background: "var(--edit-btn-bg)",
   },
   list: {
-    paddingLeft: "18px",
+    paddingLeft: "0",
     margin: 0,
+    listStyle: "none",
+    display: "grid",
+    gap: "6px",
   },
   item: {
     display: "flex",
     alignItems: "center",
-    gap: "6px",
-    marginBottom: "4px",
+    gap: "8px",
+    marginBottom: "2px",
+    fontSize: "14px",
+    padding: "7px 8px",
+    borderRadius: "9px",
+    background: "rgba(120, 220, 160, 0.12)",
+  },
+  done: {
+    opacity: 0.58,
+    textDecoration: "line-through",
   },
   check: {
-    width: "16px",
+    width: "18px",
     textAlign: "center",
     fontWeight: 700,
+    color: "#71ffd5",
   },
   empty: {
     fontSize: "14px",
-    opacity: 0.6,
+    color: "var(--text-muted)",
+    padding: "8px",
+    borderRadius: "8px",
+    background: "rgba(120, 220, 160, 0.12)",
   },
 };
 

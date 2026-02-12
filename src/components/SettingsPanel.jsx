@@ -41,7 +41,7 @@ const styles = {
   },
 
   header: {
-    position: "sticky",          // 🔑 THIS is the key
+    position: "sticky",        
     top: 0,
     zIndex: 1,
     padding: "16px",
@@ -49,7 +49,7 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     fontWeight: 600,
-    background: "var(--bg)",     // 🔑 prevents transparency
+    background: "var(--bg)",
     borderBottom: "1px solid var(--border)",
   },
 
@@ -63,7 +63,7 @@ const styles = {
 
   content: {
     padding: "16px",
-    overflowY: "auto",           // 🔑 scrolling lives here
+    overflowY: "auto",           
     WebkitOverflowScrolling: "touch",
   },
 };

@@ -9,11 +9,18 @@ export function useDayRecords() {
     freezeCount: 0,
     lastFreezeEarnedOn: null,
   });
-  const today = new Date();
-  const todayKey = toDateKey(today);
 
+  const [dayOffset, setDayOffset] = useState(0); // DEV time simulation
   const hydrated = useRef(false);
-  const processingRef = useRef(false); // Prevent concurrent updates
+
+  // --------------------
+  // Time helper
+  // --------------------
+  function getToday() {
+    const d = new Date();
+    d.setDate(d.getDate() + dayOffset);
+    return d;
+  }
 
   // --------------------
   // Load once
@@ -29,7 +36,7 @@ export function useDayRecords() {
   }, []);
 
   // --------------------
-  // Persist state
+  // Persist
   // --------------------
   useEffect(() => {
     if (!hydrated.current) return;
@@ -40,58 +47,19 @@ export function useDayRecords() {
   }, [dayRecords, meta]);
 
   // --------------------
-  // Freeze spending (auto) - DISABLED temporarily to debug
-  // We'll re-enable this once the basic logging works
+  // Freeze earning (6 consecutive logged days rule)
   // --------------------
-  // useEffect(() => {
-  //   if (!hydrated.current || processingRef.current) return;
-
-  //   let freezesLeft = meta.freezeCount;
-  //   const updates = {};
-  //   let cursor = new Date();
-
-  //   while (true) {
-  //     const key = toDateKey(cursor);
-  //     const record = dayRecords[key];
-
-  //     if (record?.status === "logged" || record?.status === "freeze") {
-  //       // ok
-  //     } else if (isSunday(cursor) || record?.status === "blocked") {
-  //        // neutral day, no freeze spent
-  //     } else if (freezesLeft > 0 && !record) {
-  //       // Only spend freeze if no record exists
-  //       freezesLeft--;
-  //       updates[key] = { status: "freeze" };
-  //     } else {
-  //       break;
-  //     }
-
-  //     cursor.setDate(cursor.getDate() - 1);
-  //   }
-
-  //   if (Object.keys(updates).length > 0) {
-  //     processingRef.current = true;
-  //     setDayRecords((prev) => ({ ...prev, ...updates }));
-  //     setMeta((prev) => ({ ...prev, freezeCount: freezesLeft }));
-  //     setTimeout(() => { processingRef.current = false; }, 0);
-  //   }
-  // }, [dayRecords, meta.freezeCount]);
-
-  // --------------------
-  // Freeze earning (2 days rule)
-  // --------------------
-  function hasTwoLoggedDays(records) {
+  function hasSixConsecutiveLoggedDays(records) {
     let count = 0;
-    let cursor = new Date();
+    let cursor = getToday();
 
-    while (count < 2) {
+    while (count < 6) {
       const key = toDateKey(cursor);
       const record = records[key];
 
       if (record?.status === "logged") {
         count++;
       } else if (
-        record?.status === "blocked" ||
         isSunday(cursor)
       ) {
         // neutral
@@ -105,57 +73,125 @@ export function useDayRecords() {
     return true;
   }
 
+  function dayDiffFromKeys(olderKey, newerKey) {
+    if (!olderKey || !newerKey) return Infinity;
+    const older = new Date(`${olderKey}T00:00:00`);
+    const newer = new Date(`${newerKey}T00:00:00`);
+    return Math.floor((newer - older) / (1000 * 60 * 60 * 24));
+  }
+
   useEffect(() => {
     if (!hydrated.current) return;
     if (meta.freezeCount >= 3) return;
 
-    const todayKey = toDateKey(new Date());
-    if (meta.lastFreezeEarnedOn === todayKey) return;
+    const todayKey = toDateKey(getToday());
+    if (meta.lastFreezeEarnedOn) {
+      const daysSinceLastEarn = dayDiffFromKeys(meta.lastFreezeEarnedOn, todayKey);
+      if (daysSinceLastEarn < 7) return;
+    }
 
-    const hasTwo = hasTwoLoggedDays(dayRecords);
-    console.log('Freeze check:', { hasTwo, todayKey, lastFreezeEarnedOn: meta.lastFreezeEarnedOn, records: dayRecords });
+    if (!hasSixConsecutiveLoggedDays(dayRecords)) return;
 
-    if (!hasTwo) return;
-
-    setMeta((prev) => ({
+    setMeta(prev => ({
       ...prev,
       freezeCount: prev.freezeCount + 1,
       lastFreezeEarnedOn: todayKey,
     }));
-  }, [dayRecords, meta.freezeCount, meta.lastFreezeEarnedOn]);
+  }, [dayRecords, dayOffset, meta.freezeCount, meta.lastFreezeEarnedOn]);
+
+  // --------------------
+  // Freeze spending
+  // --------------------
+  function evaluateFreezeSpend(records, availableFreezes) {
+    if (availableFreezes <= 0) return null;
+
+    let cursor = getToday();
+    const currentKey = toDateKey(cursor);
+    if (!records[currentKey]) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    while (true) {
+      const key = toDateKey(cursor);
+      const record = records[key];
+
+      if (record?.status === "logged" || record?.status === "freeze") {
+        break;
+      }
+
+      if (record?.status === "blocked" || isSunday(cursor)) {
+        cursor.setDate(cursor.getDate() - 1);
+        continue;
+      }
+
+      // Real miss: spend one freeze for this missed day
+      return key;
+    }
+
+    return null;
+  }
+
+  useEffect(() => {
+    if (!hydrated.current) return;
+    if (meta.freezeCount <= 0) return;
+
+    const freezeDay = evaluateFreezeSpend(
+      dayRecords,
+      meta.freezeCount
+    );
+
+    if (!freezeDay) return;
+
+    if (dayRecords[freezeDay]?.status === "freeze") return;
+
+    setDayRecords(prev => ({
+      ...prev,
+      [freezeDay]: { status: "freeze" }
+    }));
+
+    setMeta(prev => ({
+      ...prev,
+      freezeCount: prev.freezeCount - 1
+    }));
+
+  }, [dayRecords, meta.freezeCount, dayOffset]);
 
   // --------------------
   // Today helpers
   // --------------------
-
+  const today = getToday();
+  const todayKey = toDateKey(today);
   const todayStatus = dayRecords[todayKey]?.status ?? "none";
 
   function logToday() {
-    console.log('logToday called, todayKey:', todayKey);
-    setDayRecords((prev) => {
-      console.log('prev state:', prev);
-      const next = {
-        ...prev,
-        [todayKey]: { status: "logged" },
-      };
-      console.log('Setting dayRecords to:', next);
-      return next;
-    });
-  }
-
- function undoToday() {
-    setDayRecords((prev) => ({
+    setDayRecords(prev => ({
       ...prev,
-      [todayKey]: { status: "blocked" },
+      [todayKey]: { status: "logged" },
     }));
   }
 
+  function undoToday() {
+    setDayRecords(prev => {
+      const next = { ...prev };
+      delete next[todayKey];
+      return next;
+    });
+
+    setMeta(prev => {
+      if (prev.lastFreezeEarnedOn !== todayKey) return prev;
+      return {
+        ...prev,
+        freezeCount: Math.max(0, prev.freezeCount - 1),
+        lastFreezeEarnedOn: null,
+      };
+    });
+  }
+
   // --------------------
-  // Pure streak calculation
+  // Streak calculation (GYM streak)
   // --------------------
   function calculateStreak(records) {
     let streak = 0;
-    let cursor = new Date();
+    let cursor = getToday();
 
     const todayKey = toDateKey(cursor);
     if (!records[todayKey]) {
@@ -168,11 +204,13 @@ export function useDayRecords() {
 
       if (record?.status === "logged") {
         streak++;
+      } else if (record?.status === "freeze") {
+        // freeze preserves streak for the day but does not increase it
       } else if (
         record?.status === "blocked" ||
         isSunday(cursor)
       ) {
-        // neutral day, do not increment
+        // neutral
       } else {
         break;
       }
@@ -183,11 +221,13 @@ export function useDayRecords() {
     return streak;
   }
 
-
+  // --------------------
+  // Block helpers
+  // --------------------
   function blockDates(dateKeys) {
-    setDayRecords((prev) => {
+    setDayRecords(prev => {
       const next = { ...prev };
-      dateKeys.forEach((key) => {
+      dateKeys.forEach(key => {
         if (!next[key]) {
           next[key] = { status: "blocked" };
         }
@@ -197,10 +237,10 @@ export function useDayRecords() {
   }
 
   function unblockDate(key) {
-    const todayKey = toDateKey(new Date());
-    if (key <= todayKey) return; // cannot unblock past/current days
+    const todayKey = toDateKey(getToday());
+    if (key <= todayKey) return;
 
-    setDayRecords((prev) => {
+    setDayRecords(prev => {
       const copy = { ...prev };
       if (copy[key]?.status === "blocked") {
         delete copy[key];
@@ -209,22 +249,24 @@ export function useDayRecords() {
     });
   }
 
-  // // --------------------
-  // // TEST HELPER
-  // // --------------------
-  // function logDate(dateKey) {
-  //   console.log('logDate called with:', dateKey);
-  //   setDayRecords((prev) => {
-  //     const next = {
-  //       ...prev,
-  //       [dateKey]: { status: "logged" },
-  //     };
-  //     console.log('Setting dayRecords to:', next);
-  //     return next;
-  //   });
-  // }
+  function resetProgress() {
+    setDayRecords({});
+    setMeta({
+      freezeCount: 0,
+      lastFreezeEarnedOn: null,
+    });
+    setDayOffset(0);
+  }
 
   const currentStreak = calculateStreak(dayRecords);
+  const freezeSpendCandidate = evaluateFreezeSpend(dayRecords, meta.freezeCount);
+  const daysSinceLastEarn = meta.lastFreezeEarnedOn
+    ? dayDiffFromKeys(meta.lastFreezeEarnedOn, todayKey)
+    : Infinity;
+  const eligibleForFreezeEarn =
+    meta.freezeCount < 3 &&
+    daysSinceLastEarn >= 7 &&
+    hasSixConsecutiveLoggedDays(dayRecords);
 
   // --------------------
   // Public API
@@ -238,6 +280,19 @@ export function useDayRecords() {
     undoToday,
     blockDates,
     unblockDate,
-    //logDate, // TEST HELPER
+    resetProgress,
+
+    // DEV
+    dayOffset,
+    setDayOffset,
+    todayKey,
+    devSummary: {
+      todayStatus,
+      currentStreak,
+      freezeCount: meta.freezeCount,
+      eligibleForFreezeEarn,
+      freezeSpendCandidate,
+      daysSinceLastEarn,
+    },
   };
 }

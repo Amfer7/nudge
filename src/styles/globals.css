@@ -1,39 +1,85 @@
 :root {
-  --bg: #0f0f0f;
-  --text: #ffffff;
-  --card: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.08);
-  --primary-bg: #ffffff;
-  --primary-text: #0f0f0f;
-  --cal-empty: rgba(255, 255, 255, 0.15);
-  --cal-logged: #ffffff;
-  --cal-logged-text: #000000;
+  --bg: #070a12;
+  --bg-soft: #123320;
+  --text: #ebf5ff;
+  --text-muted: rgba(235, 245, 255, 0.68);
+  --card: linear-gradient(145deg, rgba(8, 24, 15, 0.92), rgba(6, 14, 10, 0.92));
+  --border: rgba(87, 193, 130, 0.34);
+  --glow: rgba(54, 255, 144, 0.28);
+  --primary-bg: linear-gradient(110deg, #38ff96, #00d96b);
+  --primary-solid: #38ff96;
+  --primary-text: #02131f;
+  --hero-card: linear-gradient(135deg, rgba(15, 54, 32, 0.92), rgba(6, 24, 14, 0.94));
+  --hero-number: #b6ffd9;
+  --hero-number-shadow: 0 0 26px rgba(56, 255, 150, 0.42);
+  --brand-color: #c9ffdf;
+  --brand-shadow: 0 0 20px rgba(56, 255, 150, 0.48);
+  --freeze-color: #d8ffea;
+  --freeze-shadow: 0 0 10px rgba(56, 255, 150, 0.3);
+  --accent-pop: #ffd54a;
+  --accent-energy: #dfff00;
+  --accent-energy-soft: rgba(223, 255, 0, 0.2);
+  --edit-btn-bg: rgba(10, 31, 18, 0.35);
+  --edit-btn-text: var(--text-muted);
+  --today-glow: 0 0 0 1px rgba(56, 255, 150, 0.35) inset, 0 0 28px rgba(56, 255, 150, 0.34), 0 14px 24px rgba(56, 255, 150, 0.2);
+  --done-text: #baffed;
+  --undo-bg: rgba(56, 255, 150, 0.12);
+  --undo-border: rgba(56, 255, 150, 0.4);
+  --undo-text: #d8ffe9;
+  --nav-scroll-bg: linear-gradient(180deg, rgba(9, 31, 19, 0.9), rgba(8, 24, 15, 0.78));
 
-  --cal-freeze-visible: rgba(255, 255, 255, 0.35);
-  --cal-freeze-subtle: rgba(255, 255, 255, 0.15);
+  --cal-empty: rgba(139, 209, 169, 0.2);
+  --cal-logged: #ff6b00;
+  --cal-logged-text: #ffffff;
 
-  --cal-blocked: #b9a7ff;
-  --cal-blocked-subtle: #3a3a3a;
+  --cal-freeze-visible: #00cfff;
+  --cal-freeze-subtle: rgba(0, 207, 255, 0.34);
 
+  --cal-blocked: #f7ad66;
+  --cal-blocked-subtle: rgba(247, 173, 102, 0.25);
 
-  --cal-sunday: rgba(255, 255, 255, 0.08);
+  --cal-sunday: rgba(168, 219, 184, 0.2);
 }
 
 [data-theme="light"] {
-  --bg: #ffffff;
-  --text: #0f0f0f;
-  --card: rgba(0, 0, 0, 0.05);
-  --border: rgba(0, 0, 0, 0.1);
-  --primary-bg: #0f0f0f;
-  --primary-text: #ffffff;
-  --cal-empty: rgba(0, 0, 0, 0.1);
-  --cal-logged: #0f0f0f;
+  --bg: #eefff3;
+  --bg-soft: #c9f9d8;
+  --text: #082012;
+  --text-muted: rgba(8, 32, 18, 0.66);
+  --card: linear-gradient(145deg, rgba(252, 255, 253, 0.96), rgba(225, 255, 236, 0.96));
+  --border: rgba(21, 161, 82, 0.3);
+  --glow: rgba(22, 204, 102, 0.26);
+  --primary-bg: linear-gradient(110deg, #2fff7f, #00c757);
+  --primary-solid: #1edb6d;
+  --primary-text: #03210f;
+  --hero-card: linear-gradient(135deg, rgba(214, 255, 228, 0.95), rgba(182, 247, 205, 0.96));
+  --hero-number: #0d3f22;
+  --hero-number-shadow: 0 2px 10px rgba(8, 94, 46, 0.28);
+  --brand-color: #083e23;
+  --brand-shadow: 0 1px 0 rgba(255, 255, 255, 0.86), 0 0 8px rgba(20, 130, 70, 0.12);
+  --freeze-color: #0f5730;
+  --freeze-shadow: 0 0 8px rgba(14, 109, 59, 0.2);
+  --accent-pop: #ff9f1c;
+  --accent-energy: #b5cf00;
+  --accent-energy-soft: rgba(181, 207, 0, 0.16);
+  --edit-btn-bg: rgba(20, 155, 78, 0.16);
+  --edit-btn-text: #0f5b31;
+  --today-glow: 0 0 0 1px rgba(4, 121, 57, 0.34) inset, 0 0 22px rgba(14, 128, 62, 0.28), 0 12px 20px rgba(18, 102, 53, 0.18);
+  --done-text: #0a4a28;
+  --undo-bg: rgba(23, 140, 72, 0.14);
+  --undo-border: rgba(23, 140, 72, 0.46);
+  --undo-text: #0a4f2b;
+  --nav-scroll-bg: linear-gradient(180deg, rgba(241, 255, 246, 0.94), rgba(226, 250, 236, 0.82));
+
+  --cal-empty: rgba(62, 152, 94, 0.2);
+  --cal-logged: #ff6b00;
   --cal-logged-text: #ffffff;
 
-  --cal-freeze-visible: rgba(0, 0, 0, 0.25);
-  --cal-freeze-subtle: rgba(0, 0, 0, 0.12);
-
-  --cal-sunday: rgba(0, 0, 0, 0.05);
+  --cal-freeze-visible: #11bdf5;
+  --cal-freeze-subtle: rgba(17, 189, 245, 0.27);
+  --cal-blocked: #f18d3f;
+  --cal-blocked-subtle: rgba(241, 141, 63, 0.22);
+  --cal-sunday: rgba(46, 171, 80, 0.12);
 }
 
 * {
@@ -41,19 +87,72 @@
 }
 
 body {
+  position: relative;
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--bg);
+  font-family: "Space Grotesk", "Segoe UI", "Avenir Next", sans-serif;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(67, 255, 158, 0.36), transparent 36%),
+    radial-gradient(circle at 88% 12%, rgba(223, 255, 0, 0.28), transparent 34%),
+    radial-gradient(circle at 52% 88%, rgba(47, 255, 132, 0.26), transparent 42%),
+    linear-gradient(180deg, var(--bg-soft), var(--bg));
+  background-size: 180% 180%, 170% 170%, 160% 160%, 100% 100%;
+  background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
   color: var(--text);
   transition: background-color 200ms ease, color 200ms ease;
+  min-height: 100vh;
+  animation: bgDrift 20s ease-in-out infinite alternate, bgFlow 14s ease-in-out infinite alternate;
 }
 
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -14%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 22% 20%, rgba(67, 255, 158, 0.24), transparent 38%),
+    radial-gradient(circle at 76% 28%, rgba(223, 255, 0, 0.2), transparent 35%),
+    radial-gradient(circle at 60% 78%, rgba(47, 255, 132, 0.14), transparent 42%);
+  filter: blur(8px);
+  animation: flowField 22s ease-in-out infinite alternate;
+}
+
+body::after {
+  background:
+    linear-gradient(
+      120deg,
+      rgba(67, 255, 158, 0.1),
+      rgba(223, 255, 0, 0.1),
+      rgba(67, 255, 158, 0.08)
+    );
+  background-size: 160% 160%;
+  animation: flowTilt 18s ease-in-out infinite alternate;
+}
+
+#root {
+  min-height: 100vh;
+}
 
 button {
   font-family: inherit;
   border: none;
   background: none;
   color: inherit;
+  transition: transform 90ms ease, filter 120ms ease;
+}
+
+button:active {
+  transform: translateY(1px) scale(0.97);
+  filter: brightness(0.96);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--glow);
+  outline-offset: 2px;
 }
 
 @keyframes tick {
@@ -63,6 +162,48 @@ button {
   }
   to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bgDrift {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+  }
+  50% {
+    background-position: 12% 18%, 86% 12%, 45% 78%, 0% 0%;
+  }
+  100% {
+    background-position: 20% 30%, 76% 24%, 54% 62%, 0% 0%;
+  }
+}
+
+@keyframes welcomeBounceInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-56px) scale(0.94);
+  }
+  68% {
+    opacity: 1;
+    transform: translateX(8px) scale(1.03);
+  }
+  84% {
+    transform: translateX(-4px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.28);
     opacity: 1;
   }
 }
