@@ -1,6 +1,6 @@
 import { APP_NAME } from "../app/version";
 
-function Navbar({ streak, freezeCount, docked, scrollProgress = 0, onOpenSettings }) {
+function Navbar({ streak, freezeCount, docked, scrollProgress = 0, todayIndex, onOpenSettings }) {
   const bgOpacity = scrollProgress;
   const blurPx = 8 * scrollProgress;
   const shadowOpacity = 0.18 * scrollProgress;
@@ -13,12 +13,8 @@ function Navbar({ streak, freezeCount, docked, scrollProgress = 0, onOpenSetting
         boxShadow: `0 6px 16px rgba(0, 0, 0, ${shadowOpacity})`,
       }}
     >
-      <div
-        style={{
-          ...styles.navBg,
-          opacity: bgOpacity,
-        }}
-      />
+      <div style={{ ...styles.navBg, opacity: bgOpacity }} />
+
       <div style={styles.inner}>
         <button
           title="Home"
@@ -28,22 +24,11 @@ function Navbar({ streak, freezeCount, docked, scrollProgress = 0, onOpenSetting
           {APP_NAME}
         </button>
 
-        <button
-          title="Workouts"
-          style={styles.navItem}
-          onClick={() => {
-            const el = document.getElementById("workout");
-            el?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }}
-        >
-          💪
-        </button>
-
         <div
           style={{
-            ...styles.navItem,
+            ...styles.centerStreak,
             opacity: docked ? 1 : 0,
-            transform: docked ? "translateY(0)" : "translateY(6px)",
+            transform: docked ? "translate(-50%, 0)" : "translate(-50%, 6px)",
             transition: "opacity 180ms ease, transform 180ms ease",
             pointerEvents: docked ? "auto" : "none",
           }}
@@ -52,13 +37,29 @@ function Navbar({ streak, freezeCount, docked, scrollProgress = 0, onOpenSetting
           {streak >= 2 && <span>🔥</span>}
         </div>
 
-        <div style={{ ...styles.navItem, ...styles.freeze }}>
-          ❄️ {freezeCount}
-        </div>
+        <div style={styles.rightActions}>
+          <div style={{ ...styles.navItem, ...styles.freeze }}>❄️ {freezeCount}</div>
 
-        <button title="Settings" style={styles.navItem} onClick={onOpenSettings}>
-          ⚙️
-        </button>
+          <button
+            title="Workout plan"
+            style={styles.navItem}
+            onClick={() => {
+              const todayCard = document.getElementById(`workout-day-${todayIndex}`);
+              if (todayCard) {
+                todayCard.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+              }
+              const section = document.getElementById("workout");
+              section?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            💪
+          </button>
+
+          <button title="Settings" style={styles.navItem} onClick={onOpenSettings}>
+            ⚙️
+          </button>
+        </div>
       </div>
     </header>
   );
@@ -88,36 +89,52 @@ const styles = {
     maxWidth: "760px",
     margin: "0 auto",
     height: "62px",
-    padding: "0 12px",
-    display: "grid",
-    gridTemplateColumns: "repeat(5, 1fr)",
+    padding: "0 10px",
+    display: "flex",
     alignItems: "center",
-    gap: "2px",
-  },
-  streak: {
-    fontSize: "25px",
-    fontWeight: 700,
+    justifyContent: "space-between",
   },
   navItem: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: "6px",
-    fontSize: "20px",
+    gap: "5px",
+    fontSize: "18px",
     cursor: "pointer",
     lineHeight: 1,
     minHeight: "40px",
     borderRadius: "8px",
     background: "transparent",
     border: "none",
+    padding: "0 8px",
   },
   brand: {
-    fontSize: "24px",
+    fontSize: "22px",
     fontWeight: 700,
     letterSpacing: "0.8px",
     color: "var(--brand-color)",
     textShadow: "var(--brand-shadow)",
     textTransform: "uppercase",
+    paddingLeft: 0,
+  },
+  centerStreak: {
+    position: "absolute",
+    left: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "6px",
+    minHeight: "40px",
+  },
+  streak: {
+    fontSize: "23px",
+    fontWeight: 700,
+  },
+  rightActions: {
+    display: "flex",
+    alignItems: "center",
+    gap: "2px",
+    marginLeft: "auto",
   },
   freeze: {
     fontWeight: 700,

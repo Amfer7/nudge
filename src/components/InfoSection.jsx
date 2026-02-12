@@ -45,9 +45,8 @@ function InfoSection() {
         </li>
 
         <li>
-          <strong>Workouts and streaks are separate.</strong><br />
-          Checking off exercises helps during your workout, but it does not
-          affect streak logic.
+          <strong>This app runs on honesty.</strong><br />
+          Nudge is built on trust. Log truthfully and do not cheat your streak.
         </li>
 
         <li>

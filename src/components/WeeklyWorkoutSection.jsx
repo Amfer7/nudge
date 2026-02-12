@@ -26,6 +26,7 @@ function WeeklyWorkoutSection({
         return (
           <div
             key={day}
+            id={`workout-day-${idx}`}
             style={{
               ...styles.dayBlock,
               ...(isToday ? styles.today : {}),

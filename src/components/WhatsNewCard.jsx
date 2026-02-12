@@ -7,29 +7,26 @@ function WhatsNewCard() {
 
       <ul style={styles.list}>
         <li>
-          Major UI refresh: energetic neon-green visual language, cleaner cards,
-          improved hierarchy, and better readability across mobile and desktop.
+          Streak logic is now stable and production-ready, including proper
+          streak carryover, miss handling, and reliable recalculation.
         </li>
         <li>
-          Calendar status colors are now explicit: fiery orange for logged days
-          and ice blue for freeze days.
+          Freeze system is fully implemented: earn after 6 valid consecutive
+          logs, max 1 earn per 7-day window, up to 3 stored, and automatic
+          freeze spending on missed days.
         </li>
         <li>
-          Streak and freeze system finalized: 6-day earn rule, max 1 earn per
-          7-day window, and freeze spending that preserves streak without
-          inflating it.
+          Undo now safely reverses the day state and also revokes a same-day
+          earned freeze when applicable.
         </li>
         <li>
-          Undo behavior is safer: undoing a qualifying day now revokes same-day
-          earned freeze correctly.
+          Major UI overhaul shipped: new visual identity, improved readability
+          in dark/light modes, clearer calendar semantics, and smoother mobile
+          navigation behavior.
         </li>
         <li>
-          Developer testing improved with time-shift controls, summary readouts,
-          and full reset support for fast logic validation.
-        </li>
-        <li>
-          Motion polish added: animated background flow, responsive navbar
-          behavior on scroll, and a refreshed welcome animation.
+          Developer tooling improved for validation: day-offset simulation,
+          debug summary metrics, and one-tap reset controls.
         </li>
       </ul>
     </section>

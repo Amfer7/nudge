@@ -127,6 +127,7 @@ function AppShell() {
         freezeCount={freezeCount}
         docked={docked}
         scrollProgress={scrollProgress}
+        todayIndex={todayIndex}
         onOpenSettings={() => setSettingsOpen(true)}
       />
      <main style={styles.page}>
