@@ -14,6 +14,11 @@ export function isSunday(date) {
   return d.getDay() === 0;
 }
 
+export function isRestDay(date, restDays = [0]) {
+  const d = new Date(date);
+  return restDays.includes(d.getDay());
+}
+
 export function addDays(date, days) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);

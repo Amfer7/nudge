@@ -10,9 +10,9 @@ function InfoSection() {
         </li>
 
         <li>
-          <strong>Sundays are rest days.</strong><br />
-          Sundays do not break your streak, but you can still log them if you
-          train.
+          <strong>Rest days are configurable.</strong><br />
+          Sunday is the default rest day. You can choose up to 3 rest days in
+          Settings, and unlogged rest days stay neutral.
         </li>
 
         <li>

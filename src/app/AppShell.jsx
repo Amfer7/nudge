@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useDayRecords } from "../hooks/useDayRecords";
 import { useWorkouts } from "../hooks/useWorkouts";
 import { useExerciseCompletion } from "../hooks/useExerciseCompletion";
@@ -21,6 +21,9 @@ import WhatsNewCard from "../components/WhatsNewCard";
 import { APP_NAME, APP_VERSION } from "./version";
 
 function AppShell() {
+  const { freezeVisibility, setFreezeVisibility, restDays, setRestDays } =
+    useStreakPreferences();
+
   // ---- streak / logging ----
   const {
     dayRecords,
@@ -36,7 +39,7 @@ function AppShell() {
     setDayOffset,
     todayKey,
     devSummary,
-  } = useDayRecords();
+  } = useDayRecords(restDays);
 
   // ---- workouts ----
   const { workouts, updateWorkout } = useWorkouts();
@@ -50,7 +53,6 @@ function AppShell() {
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { freezeVisibility, setFreezeVisibility } = useStreakPreferences();
 
   const [docked, setDocked] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -245,7 +247,7 @@ function AppShell() {
           <div style={styles.blockTitle}>Planned time off</div>
           <div style={styles.blockDesc}>
             Going to be away or unable to train?
-            Block dates ahead of time so your streak isn’t affected. (Must be after 48 hours)
+            Block dates ahead of time so your streak isn't affected. (Must be after 48 hours)
           </div>
         </div>
 
@@ -263,6 +265,7 @@ function AppShell() {
         onClose={() => setCalendarOpen(false)}
         dayRecords={dayRecords}
         freezeVisibility={freezeVisibility}
+        restDays={restDays}
         anchorDateKey={todayKey}
       />
 
@@ -280,6 +283,8 @@ function AppShell() {
           <StreakPreferences
             freezeVisibility={freezeVisibility}
             onChange={setFreezeVisibility}
+            restDays={restDays}
+            onSaveRestDays={setRestDays}
           />
           <WhatsNewCard />
           <InfoSection />
@@ -299,4 +304,5 @@ function AppShell() {
 }
 
 export default AppShell;
+
 

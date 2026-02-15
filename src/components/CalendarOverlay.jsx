@@ -1,8 +1,15 @@
-import { toDateKey, isSunday } from "../utils/dateUtils";
+﻿import { toDateKey, isRestDay } from "../utils/dateUtils";
 import { useEffect, useState } from "react";
 
 
-function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility, anchorDateKey }) {
+function CalendarOverlay({
+  visible,
+  onClose,
+  dayRecords,
+  freezeVisibility,
+  restDays = [0],
+  anchorDateKey,
+}) {
   function getAnchorMonthStart() {
     if (anchorDateKey) {
       const [y, m] = anchorDateKey.split("-").map(Number);
@@ -45,7 +52,7 @@ function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility, ancho
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.sheet} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
-          <button style={styles.navBtn} onClick={prevMonth}>‹</button>
+          <button style={styles.navBtn} onClick={prevMonth}>{"<"}</button>
 
           <span>
             {viewDate.toLocaleString("default", {
@@ -54,13 +61,13 @@ function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility, ancho
             })}
           </span>
 
-          <button style={styles.navBtn} onClick={nextMonth}>›</button>
+          <button style={styles.navBtn} onClick={nextMonth}>{">"}</button>
         </div>
         <div style={styles.grid}>
           {days.map((date) => {
             const key = toDateKey(date);
             const record = dayRecords[key];
-            const sunday = isSunday(date);
+            const restDay = isRestDay(date, restDays);
 
             let cellStyle = styles.cell;
 
@@ -76,9 +83,9 @@ function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility, ancho
                 freezeVisibility === "visible"
                   ? styles.blocked
                   : styles.blockedSubtle;
-            } else if (sunday) {
-              // Sunday gets neutral tint only when there is no explicit record status.
-              cellStyle = styles.sunday;
+            } else if (restDay) {
+              // Rest days get a neutral tint only when there is no explicit record status.
+              cellStyle = styles.restDay;
             }
 
             return (
@@ -106,8 +113,8 @@ const styles = {
 
   sheet: {
     width: "100%",
-    backgroundColor: "var(--bg)", // 🔑 FIX
-    color: "var(--text)",         // 🔑 FIX
+    backgroundColor: "var(--bg)",
+    color: "var(--text)",
     borderTopLeftRadius: "16px",
     borderTopRightRadius: "16px",
     padding: "16px",
@@ -166,14 +173,14 @@ const styles = {
     opacity: 0.6,
   },
 
-  sunday: {
+  restDay: {
     height: "40px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "8px",
     background: "var(--cal-sunday)",
-    opacity: 0.6, // 🔑 softened
+    opacity: 0.6,
   },
 
   blocked: {
@@ -205,3 +212,4 @@ const styles = {
 
 };
 export default CalendarOverlay;
+
