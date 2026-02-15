@@ -113,7 +113,7 @@ function AppShell() {
       borderTop: "1px solid var(--border)",
       fontSize: "14px",
       color: "var(--text-muted)",
-      textAlign: "left",
+      textAlign: "center",
     },
   };
 
@@ -285,8 +285,8 @@ function AppShell() {
 
       <footer style={styles.footer}>
         {APP_NAME} {APP_VERSION}
-          <br />
-        Designed and built by Amfer.
+        <br />
+         {"\u00A9"} 2026 Amfer. All rights reserved.
       </footer>
      </main>
     </div>
@@ -296,3 +296,5 @@ function AppShell() {
 }
 
 export default AppShell;
+
+
