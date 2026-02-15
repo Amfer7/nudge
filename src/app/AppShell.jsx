@@ -9,6 +9,7 @@ import StreakHero from "../components/StreakHero";
 import LogTodayButton from "../components/LogTodayButton";
 import CalendarOverlay from "../components/CalendarOverlay";
 import WeeklyWorkoutSection from "../components/WeeklyWorkoutSection";
+import PRSection from "../components/PRSection";
 import WorkoutEditor from "../components/WorkoutEditor";
 import InfoSection from "../components/InfoSection";
 import SettingsPanel from "../components/SettingsPanel";
@@ -154,6 +155,8 @@ function AppShell() {
         onUndo={undoToday}
       />
 
+      <PRSection />
+
       {import.meta.env.DEV && (
       <div
         style={{
@@ -296,5 +299,4 @@ function AppShell() {
 }
 
 export default AppShell;
-
 
