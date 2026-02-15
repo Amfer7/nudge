@@ -23,7 +23,7 @@
   --edit-btn-text: var(--text-muted);
   --today-glow: 0 0 0 1px rgba(56, 255, 150, 0.35) inset, 0 0 28px rgba(56, 255, 150, 0.34), 0 14px 24px rgba(56, 255, 150, 0.2);
   --done-text: #baffed;
-  --undo-bg: rgba(56, 255, 150, 0.12);
+  --undo-bg: rgba(33, 37, 35, 0.2);
   --undo-border: rgba(56, 255, 150, 0.4);
   --undo-text: #d8ffe9;
   --nav-scroll-bg: linear-gradient(180deg, rgba(9, 31, 19, 0.9), rgba(8, 24, 15, 0.78));
@@ -66,7 +66,7 @@
   --edit-btn-text: #0f5b31;
   --today-glow: 0 0 0 1px rgba(4, 121, 57, 0.34) inset, 0 0 22px rgba(14, 128, 62, 0.28), 0 12px 20px rgba(18, 102, 53, 0.18);
   --done-text: #0a4a28;
-  --undo-bg: rgba(23, 140, 72, 0.14);
+  --undo-bg: rgba(23, 140, 72, 0.22);
   --undo-border: rgba(23, 140, 72, 0.46);
   --undo-text: #0a4f2b;
   --nav-scroll-bg: linear-gradient(180deg, rgba(241, 255, 246, 0.94), rgba(226, 250, 236, 0.82));
@@ -178,21 +178,26 @@ button:focus-visible {
   }
 }
 
-@keyframes welcomeBounceInLeft {
+@keyframes slideInFromLeft {
   from {
     opacity: 0;
-    transform: translateX(-56px) scale(0.94);
-  }
-  68% {
-    opacity: 1;
-    transform: translateX(8px) scale(1.03);
-  }
-  84% {
-    transform: translateX(-4px) scale(0.995);
+    transform: translateX(-60px);
   }
   to {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
+  }
+}
+
+@keyframes shineSweep {
+  0% {
+    transform: translateX(-220%) skewX(-20deg);
+  }
+  28% {
+    transform: translateX(280%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(280%) skewX(-20deg);
   }
 }
 

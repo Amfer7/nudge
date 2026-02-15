@@ -2,6 +2,7 @@ function WelcomeBack({ isLogged = false }) {
   return (
     <div style={styles.wrap}>
       <div style={styles.badge}>
+        <span style={styles.shine} />
         <span
           style={{
             ...styles.dot,
@@ -23,6 +24,8 @@ const styles = {
   },
   badge: {
     display: "inline-flex",
+    position: "relative",
+    overflow: "hidden",
     alignItems: "center",
     gap: "8px",
     padding: "10px 14px",
@@ -34,7 +37,21 @@ const styles = {
     fontWeight: 700,
     color: "var(--text)",
     boxShadow: "0 10px 18px rgba(0, 0, 0, 0.18)",
-    animation: "welcomeBounceInLeft 920ms cubic-bezier(0.2, 0.95, 0.2, 1)",
+    animation: "slideInFromLeft 820ms cubic-bezier(0.16, 1, 0.3, 1)",
+  },
+  shine: {
+    position: "absolute",
+    top: "-20%",
+    left: 0,
+    width: "62%",
+    height: "140%",
+    background:
+      "linear-gradient(90deg, transparent, rgba(255,255,255,0.82), transparent)",
+    transform: "translateX(-220%) skewX(-20deg)",
+    mixBlendMode: "screen",
+    opacity: 0.95,
+    animation: "shineSweep 9s cubic-bezier(0.3, 0, 0.2, 1) infinite",
+    pointerEvents: "none",
   },
   dot: {
     width: "10px",

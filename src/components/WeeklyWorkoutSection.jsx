@@ -74,7 +74,7 @@ function WeeklyWorkoutSection({
 
 const styles = {
   container: {
-    padding: "0 16px 30px",
+    padding: "0 16px 12px",
     marginTop: "24px",
   },
   heading: {

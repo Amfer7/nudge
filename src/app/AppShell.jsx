@@ -66,43 +66,52 @@ function AppShell() {
       width: "100%",
     },
     blockSection: {
-      padding: "14px",
+      padding: "8px 0 14px",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      gap: "12px",
-      border: "1px solid var(--border)",
-      borderRadius: "14px",
-      background: "var(--card)",
-      margin: "8px 16px 0",
-      boxShadow: "0 8px 16px rgba(0, 0, 0, 0.18)",
+      gap: "8px",
+      margin: "0 16px 0",
+    },
+    blockContent: {
+      flex: 1,
+      minWidth: 0,
     },
 
     blockTitle: {
       fontWeight: 600,
-      marginBottom: "4px",
+      marginBottom: "6px",
+      fontSize: "28px",
+      letterSpacing: "0.2px",
     },
 
     blockDesc: {
       fontSize: "14px",
+      lineHeight: 1.45,
       color: "var(--text-muted)",
+      paddingRight: "16px",
+      paddingTop: "4px",
     },
 
     blockButton: {
-      padding: "8px 12px",
-      borderRadius: "8px",
-      border: "1px solid rgba(45, 255, 196, 0.35)",
-      background: "rgba(45, 255, 196, 0.08)",
+      padding: "12px 18px",
+      borderRadius: "10px",
+      border: "1px solid rgba(45, 255, 196, 0.55)",
+      background: "rgba(7, 22, 14, 0.72)",
       color: "var(--text)",
       cursor: "pointer",
       whiteSpace: "nowrap",
-      fontWeight: 600,
+      fontWeight: 700,
+      fontSize: "14px",
+      letterSpacing: "0.2px",
+      marginLeft: "auto",
+      flexShrink: 0,
     },
     footer: {
       marginTop: "14px",
       padding: "10px 16px 20px",
       borderTop: "1px solid var(--border)",
-      fontSize: "11px",
+      fontSize: "14px",
       color: "var(--text-muted)",
       textAlign: "left",
     },
@@ -127,7 +136,6 @@ function AppShell() {
         freezeCount={freezeCount}
         docked={docked}
         scrollProgress={scrollProgress}
-        todayIndex={todayIndex}
         onOpenSettings={() => setSettingsOpen(true)}
       />
      <main style={styles.page}>
@@ -211,30 +219,6 @@ function AppShell() {
       </div>
     )}
 
-      {/* TEST HELPER - Remove in production
-      <div style={{ textAlign: 'center', marginTop: '12px' }}>
-        <button
-          style={{
-            padding: '8px 12px',
-            fontSize: '12px',
-            opacity: 0.5,
-            border: '1px solid var(--border)',
-            borderRadius: '6px',
-            background: 'transparent',
-            color: 'var(--text)',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
-            logDate(yesterdayKey);
-          }}
-        >
-          [TEST] Log Yesterday
-        </button>
-      </div> */}
-
       {/* Weekly workout planner */}
       <WeeklyWorkoutSection
         workouts={workouts}
@@ -254,7 +238,7 @@ function AppShell() {
       )}
 
       <section style={styles.blockSection}>
-        <div>
+        <div style={styles.blockContent}>
           <div style={styles.blockTitle}>Planned time off</div>
           <div style={styles.blockDesc}>
             Going to be away or unable to train?
@@ -300,6 +284,8 @@ function AppShell() {
 
       <footer style={styles.footer}>
         {APP_NAME} {APP_VERSION}
+          <br />
+        Designed and built by Amfer.
       </footer>
      </main>
     </div>
@@ -309,4 +295,3 @@ function AppShell() {
 }
 
 export default AppShell;
-

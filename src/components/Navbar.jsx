@@ -1,6 +1,9 @@
 import { APP_NAME } from "../app/version";
+import settingsIcon from "../assets/settings.svg";
+import freezeIcon from "../assets/Freeze.png";
+import fireIcon from "../assets/Fire.png";
 
-function Navbar({ streak, freezeCount, docked, scrollProgress = 0, todayIndex, onOpenSettings }) {
+function Navbar({ streak, freezeCount, docked, scrollProgress = 0, onOpenSettings }) {
   const bgOpacity = scrollProgress;
   const blurPx = 8 * scrollProgress;
   const shadowOpacity = 0.18 * scrollProgress;
@@ -34,30 +37,17 @@ function Navbar({ streak, freezeCount, docked, scrollProgress = 0, todayIndex, o
           }}
         >
           <span style={styles.streak}>{streak}</span>
-          {streak >= 2 && <span>🔥</span>}
+          {streak >= 2 && <img src={fireIcon} alt="Streak fire" style={styles.navFireIcon} />}
         </div>
 
         <div style={styles.rightActions}>
-          <div style={{ ...styles.navItem, ...styles.freeze }}>❄️ {freezeCount}</div>
-
-          <button
-            title="Workout plan"
-            style={styles.navItem}
-            onClick={() => {
-              const todayCard = document.getElementById(`workout-day-${todayIndex}`);
-              if (todayCard) {
-                todayCard.scrollIntoView({ behavior: "smooth", block: "center" });
-                return;
-              }
-              const section = document.getElementById("workout");
-              section?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-          >
-            💪
-          </button>
+          <div style={{ ...styles.navItem, ...styles.freeze }}>
+            <img src={freezeIcon} alt="Freezes" style={styles.freezeIcon} />
+            {freezeCount}
+          </div>
 
           <button title="Settings" style={styles.navItem} onClick={onOpenSettings}>
-            ⚙️
+            <img src={settingsIcon} alt="Settings" style={styles.settingsIcon} />
           </button>
         </div>
       </div>
@@ -124,11 +114,12 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     gap: "6px",
-    minHeight: "40px",
+    minHeight: "46px",
   },
   streak: {
-    fontSize: "23px",
+    fontSize: "24px",
     fontWeight: 700,
+    lineHeight: 1.12,
   },
   rightActions: {
     display: "flex",
@@ -140,6 +131,24 @@ const styles = {
     fontWeight: 700,
     color: "var(--freeze-color)",
     textShadow: "var(--freeze-shadow)",
+  },
+  freezeIcon: {
+    width: "26px",
+    height: "26px",
+    objectFit: "contain",
+    borderRadius: "3px",
+  },
+  settingsIcon: {
+    width: "20px",
+    height: "20px",
+    objectFit: "contain",
+    borderRadius: "4px",
+  },
+  navFireIcon: {
+    width: "22px",
+    height: "22px",
+    objectFit: "contain",
+    filter: "drop-shadow(0 0 8px rgba(255, 120, 0, 0.45))",
   },
 };
 

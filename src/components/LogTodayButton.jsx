@@ -20,11 +20,14 @@ function LogTodayButton({ todayStatus, onLog, onUndo }) {
           }}
           onClick={onLog}
         >
-          Mark today as done
+          <span style={styles.primaryContent}>
+            Log Today
+            
+          </span>
         </button>
       ) : (
         <div style={styles.loggedState}>
-          <div style={styles.doneText}>Today marked complete</div>
+          <div style={styles.doneText}>Great work today!</div>
           <button style={styles.undoButton} onClick={onUndo}>
             Undo
           </button>
@@ -43,8 +46,8 @@ const styles = {
   },
   primaryButton: {
     width: "100%",
-    maxWidth: "560px",
-    padding: "16px 20px",
+    maxWidth: "340px",
+    padding: "14px 18px",
     fontSize: "16px",
     fontWeight: 700,
     borderRadius: "14px",
@@ -55,17 +58,28 @@ const styles = {
     transition: "transform 140ms cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 160ms ease",
     letterSpacing: "0.2px",
   },
+  primaryContent: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+  },
+  tick: {
+    fontSize: "18px",
+    fontWeight: 800,
+    lineHeight: 1,
+  },
   loggedState: {
     width: "100%",
-    maxWidth: "560px",
+    maxWidth: "320px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     gap: "8px",
     borderRadius: "14px",
-    padding: "12px",
-    border: "1px solid var(--border)",
-    background: "var(--card)",
+    padding: "10px 12px",
+    border: "1px solid rgba(56, 255, 150, 0.26)",
+    background: "linear-gradient(145deg, rgba(56, 255, 150, 0.12), rgba(56, 255, 150, 0.04))",
   },
   doneText: {
     fontSize: "14px",

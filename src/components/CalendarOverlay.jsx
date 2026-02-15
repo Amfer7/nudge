@@ -52,20 +52,23 @@ function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility }) {
             const sunday = isSunday(date);
 
             let cellStyle = styles.cell;
-            if (record?.status === "logged") cellStyle = styles.logged;
-            if (record?.status === "freeze") {
-            cellStyle =
+
+            if (record?.status === "logged") {
+              cellStyle = styles.logged;
+            } else if (record?.status === "freeze") {
+              cellStyle =
                 freezeVisibility === "visible"
-                ? styles.freezeVisible
-                : styles.freezeSubtle;
-            }            
-            if (record?.status === "blocked") {
+                  ? styles.freezeVisible
+                  : styles.freezeSubtle;
+            } else if (record?.status === "blocked") {
               cellStyle =
                 freezeVisibility === "visible"
                   ? styles.blocked
                   : styles.blockedSubtle;
+            } else if (sunday) {
+              // Sunday gets neutral tint only when there is no explicit record status.
+              cellStyle = styles.sunday;
             }
-            if (sunday) cellStyle = styles.sunday;
 
             return (
               <div key={key} style={cellStyle}>
