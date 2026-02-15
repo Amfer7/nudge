@@ -163,6 +163,7 @@ export function useDayRecords() {
   const todayStatus = dayRecords[todayKey]?.status ?? "none";
 
   function logToday() {
+    const todayKey = toDateKey(getToday());
     setDayRecords(prev => ({
       ...prev,
       [todayKey]: { status: "logged" },
@@ -170,6 +171,7 @@ export function useDayRecords() {
   }
 
   function undoToday() {
+    const todayKey = toDateKey(getToday());
     setDayRecords(prev => {
       const next = { ...prev };
       delete next[todayKey];

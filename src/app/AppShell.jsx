@@ -260,6 +260,7 @@ function AppShell() {
         onClose={() => setCalendarOpen(false)}
         dayRecords={dayRecords}
         freezeVisibility={freezeVisibility}
+        anchorDateKey={todayKey}
       />
 
       <BlockDatesOverlay

@@ -1,15 +1,26 @@
 import { toDateKey, isSunday } from "../utils/dateUtils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
-function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility }) {
-  if (!visible) return null;
-
-   const [viewDate, setViewDate] = useState(() => {
+function CalendarOverlay({ visible, onClose, dayRecords, freezeVisibility, anchorDateKey }) {
+  function getAnchorMonthStart() {
+    if (anchorDateKey) {
+      const [y, m] = anchorDateKey.split("-").map(Number);
+      return new Date(y, (m || 1) - 1, 1);
+    }
     const d = new Date();
     d.setDate(1);
     return d;
-    });
+  }
+
+  const [viewDate, setViewDate] = useState(getAnchorMonthStart);
+
+  useEffect(() => {
+    if (!visible) return;
+    setViewDate(getAnchorMonthStart());
+  }, [visible, anchorDateKey]);
+
+  if (!visible) return null;
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
