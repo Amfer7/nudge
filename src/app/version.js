@@ -1,2 +1,2 @@
 export const APP_NAME = "Nudge";
-export const APP_VERSION = "v2.1.1";
+export const APP_VERSION = "v2.2.1";
