@@ -1,5 +1,5 @@
-// src/components/BlockDatesOverlay.jsx
-import { toDateKey, isSunday } from "../utils/dateUtils";
+﻿// src/components/BlockDatesOverlay.jsx
+import { toDateKey } from "../utils/dateUtils";
 import { useState } from "react";
 
 function BlockDatesOverlay({
@@ -13,7 +13,7 @@ function BlockDatesOverlay({
 
   const today = new Date();
   const minDate = new Date();
-  minDate.setDate(today.getDate() + 1); // 🔑 rule enforced
+  minDate.setDate(today.getDate() + 1); // rule enforced
 
    const [viewDate, setViewDate] = useState(() => {
     const d = new Date();
@@ -67,14 +67,14 @@ function BlockDatesOverlay({
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.sheet} onClick={(e) => e.stopPropagation()}>
         <div style={styles.header}>
-            <button style={styles.navBtn} onClick={prevMonth}>‹</button>
+            <button style={styles.navBtn} onClick={prevMonth}>{"<"}</button>
             <span>
                 {viewDate.toLocaleString("default", {
                 month: "long",
                 year: "numeric",
                 })}
             </span>
-            <button style={styles.navBtn} onClick={nextMonth}>›</button>
+            <button style={styles.navBtn} onClick={nextMonth}>{">"}</button>
             </div>
 
         <div style={styles.grid}>
@@ -186,3 +186,4 @@ const styles = {
 };
 
 export default BlockDatesOverlay;
+

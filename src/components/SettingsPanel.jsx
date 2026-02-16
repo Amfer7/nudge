@@ -1,4 +1,4 @@
-function SettingsPanel({ onClose, children }) {
+﻿function SettingsPanel({ onClose, children }) {
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.sheet} onClick={(e) => e.stopPropagation()}>
@@ -6,7 +6,7 @@ function SettingsPanel({ onClose, children }) {
         <div style={styles.header}>
           <span>Settings</span>
           <button style={styles.close} onClick={onClose}>
-            ✕
+            x
           </button>
         </div>
 
@@ -69,3 +69,4 @@ const styles = {
 };
 
 export default SettingsPanel;
+

@@ -356,7 +356,7 @@ function PRSection() {
           </div>
         )}
 
-        {cards.map((pr) => (
+        {cards.map((pr, index) => (
           <article
             key={pr.id}
             style={{
@@ -365,6 +365,20 @@ function PRSection() {
               background: getTypeColor(pr.type).tint,
             }}
           >
+            <span
+              aria-hidden="true"
+              style={{
+                ...styles.cardShine,
+                animationDelay: `${index * 0.45}s`,
+              }}
+            />
+            <span
+              aria-hidden="true"
+              style={{
+                ...styles.cardShine,
+                animationDelay: `${index * 0.45 + 4.5}s`,
+              }}
+            />
             <button
               style={styles.deleteBtn}
               onClick={() => handleDelete(pr.id)}
@@ -464,7 +478,7 @@ const styles = {
     gap: "8px",
   },
   emptyCard: {
-    minHeight: "142px",
+    minHeight: "50px",
     borderRadius: "10px",
     border: "1px dashed var(--border)",
     padding: "10px",
@@ -488,6 +502,22 @@ const styles = {
     justifyContent: "space-between",
     textAlign: "center",
     position: "relative",
+    overflow: "hidden",
+  },
+  cardShine: {
+    position: "absolute",
+    top: "-18%",
+    left: 0,
+    width: "64%",
+    height: "140%",
+    background:
+      "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent)",
+    transform: "translateX(-220%) skewX(-20deg)",
+    mixBlendMode: "screen",
+    opacity: 1,
+    animation: "shineSweep 9s cubic-bezier(0.3, 0, 0.2, 1) infinite",
+    pointerEvents: "none",
+    zIndex: 1,
   },
   deleteBtn: {
     position: "absolute",
@@ -502,8 +532,8 @@ const styles = {
     cursor: "pointer",
   },
   cardName: {
-    paddingTop: "18px",
-    fontSize: "12px",
+    paddingTop: "10px",
+    fontSize: "16px",
     fontWeight: 700,
     maxWidth: "100%",
     overflow: "hidden",
@@ -511,7 +541,7 @@ const styles = {
     whiteSpace: "nowrap",
   },
   cardValue: {
-    fontSize: "18px",
+    fontSize: "20px",
     fontWeight: 800,
     lineHeight: 1.1,
   },
@@ -521,10 +551,10 @@ const styles = {
     color: "var(--text)",
     borderRadius: "8px",
     padding: "4px 9px",
-    fontSize: "11px",
+    fontSize: "14px",
+    fontWeight: 700,
     cursor: "pointer",
   },
 };
 
 export default PRSection;
-

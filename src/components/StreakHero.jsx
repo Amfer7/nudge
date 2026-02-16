@@ -100,8 +100,8 @@ const styles = {
       "0 0 10px rgba(255,255,255,0.18), 0 0 22px rgba(56,255,150,0.65), 0 0 42px rgba(56,255,150,0.4)",
   },
   fireIcon: {
-    width: "38px",
-    height: "38px",
+    width: "68px",
+    height: "68px",
     objectFit: "contain",
     filter: "drop-shadow(0 0 10px rgba(255, 120, 0, 0.45))",
   },
