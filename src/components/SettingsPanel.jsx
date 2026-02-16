@@ -26,7 +26,7 @@ const styles = {
     background: "rgba(0,0,0,0.4)",
     display: "flex",
     alignItems: "flex-end",
-    zIndex: 200,
+    zIndex: 9999,
   },
 
   sheet: {
