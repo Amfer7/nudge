@@ -48,7 +48,7 @@ Gym Streak is designed for people who want motivation without pressure — track
 
 - **Frontend:** React + Vite  
 - **State Management:** React hooks  
-- **Persistence:** Browser `localStorage`  
+- **Persistence:** Browser `localStorage` (Soon backend database)
 - **Deployment:** Vercel
 
 ---
@@ -66,8 +66,8 @@ https://nudge-virid.vercel.app
 - Miss a weekday:
   - If you have a freeze → freeze is used
   - If you don’t → streak breaks
-- Sundays never break streaks
-- Earn **1 freeze after 2 consecutive logged days**
+- Rest days never break streaks
+- Earn **1 freeze after 6 consecutive logged days**
 - Max freezes: **3**
 
 ---
