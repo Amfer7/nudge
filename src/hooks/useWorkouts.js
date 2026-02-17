@@ -50,10 +50,25 @@ export function useWorkouts() {
   }, [workouts]);
 
   function updateWorkout(day, workout) {
-    setWorkouts((prev) => ({
-      ...prev,
-      [day]: workout,
-    }));
+    setWorkouts((prev) => {
+      const hasTitle = !!workout?.title?.trim();
+      const hasExercises =
+        Array.isArray(workout?.exercises) && workout.exercises.length > 0;
+
+      if (!hasTitle && !hasExercises) {
+        const next = { ...prev };
+        delete next[day];
+        return next;
+      }
+
+      return {
+        ...prev,
+        [day]: {
+          title: workout.title || "",
+          exercises: workout.exercises || [],
+        },
+      };
+    });
   }
 
   return {

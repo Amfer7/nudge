@@ -57,6 +57,26 @@ function AppShell() {
   const [docked, setDocked] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [blockPickerOpen, setBlockPickerOpen] = useState(false);
+
+  function formatDateKey(dateKey) {
+    const [year, month, day] = String(dateKey).split("-").map(Number);
+    if (!year || !month || !day) {
+      return dateKey;
+    }
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  const upcomingBlockedKeys = Object.keys(dayRecords)
+    .filter((key) => dayRecords[key]?.status === "blocked" && key >= todayKey)
+    .sort();
+
+  const blockedDateList = upcomingBlockedKeys
+    .map((dateKey) => formatDateKey(dateKey))
+    .join(", ");
   
   const styles = {
     root: {
@@ -94,6 +114,19 @@ function AppShell() {
       color: "var(--text-muted)",
       paddingRight: "16px",
       paddingTop: "4px",
+    },
+    blockMeta: {
+      marginTop: "10px",
+    },
+    blockMetaLine: {
+      fontSize: "12px",
+      color: "var(--text)",
+      letterSpacing: "0.2px",
+      opacity: 0.92,
+    },
+    blockMetaMuted: {
+      color: "var(--text-muted)",
+      opacity: 0.86,
     },
 
     blockButton: {
@@ -248,6 +281,15 @@ function AppShell() {
           <div style={styles.blockDesc}>
             Going to be away or unable to train?
             Block dates ahead of time so your streak isn't affected. (Must be after 48 hours)
+          </div>
+          <div style={styles.blockMeta}>
+            {upcomingBlockedKeys.length === 0 ? (
+              <div style={{ ...styles.blockMetaLine, ...styles.blockMetaMuted }}>
+                No upcoming blocked dates.
+              </div>
+            ) : (
+              <div style={styles.blockMetaLine}>Blocked dates: {blockedDateList}</div>
+            )}
           </div>
         </div>
 

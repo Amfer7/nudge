@@ -18,6 +18,9 @@ function WhatsNewCard() {
         <li>
           PR cards now include the same premium shine effect used across the main UI.
         </li>
+        <li>
+          Various UI tweaks and optimizations to make the experience smoother and more polished.
+        </li>
       </ul>
     </section>
   );

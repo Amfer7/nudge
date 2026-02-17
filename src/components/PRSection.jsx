@@ -420,7 +420,7 @@ const styles = {
   },
   heading: {
     marginBottom: "10px",
-    fontSize: "15px",
+    fontSize: "18px",
     fontWeight: 700,
     letterSpacing: "0.25px",
   },

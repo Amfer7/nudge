@@ -34,8 +34,7 @@ function BlockDatesOverlay({
     function prevMonth() {
     setViewDate((d) => {
         const prev = new Date(d.getFullYear(), d.getMonth() - 1, 1);
-        const currentMonth = new Date();
-        currentMonth.setDate(1);
+        const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         return prev < currentMonth ? d : prev;
     });
     }

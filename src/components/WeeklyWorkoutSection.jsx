@@ -33,9 +33,14 @@ function WeeklyWorkoutSection({
             }}
           >
             <div style={styles.dayHeader}>
-              <span style={styles.dayName}>
-                {day} {isToday && "(Today)"}
-              </span>
+              <div style={styles.dayHeaderText}>
+                <span style={styles.dayName}>
+                  {day} {isToday && "(Today)"}
+                </span>
+                {!!workout?.title?.trim() && (
+                  <span style={styles.daySubheading}>{workout.title.trim()}</span>
+                )}
+              </div>
               <button style={styles.editBtn} onClick={() => onEditDay(idx)}>
                 Edit
               </button>
@@ -79,7 +84,7 @@ const styles = {
   },
   heading: {
     marginBottom: "12px",
-    fontSize: "16px",
+    fontSize: "18px",
     fontWeight: 700,
     letterSpacing: "0.35px",
   },
@@ -98,12 +103,23 @@ const styles = {
   dayHeader: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: "8px",
+  },
+  dayHeaderText: {
+    display: "grid",
+    gap: "2px",
   },
   dayName: {
     fontWeight: 700,
     fontSize: "14px",
+  },
+  daySubheading: {
+    fontSize: "12px",
+    lineHeight: 1.2,
+    color: "var(--text-muted)",
+    letterSpacing: "0.55px",
+    fontWeight: 600,
   },
   editBtn: {
     fontSize: "12px",
