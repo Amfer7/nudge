@@ -32,10 +32,17 @@ function WeeklyWorkoutSection({
               ...(isToday ? styles.today : {}),
             }}
           >
+            {isToday && (
+              <>
+                <span aria-hidden="true" style={styles.todaySweep} />
+                <span aria-hidden="true" style={styles.todayCornerMark} />
+              </>
+            )}
             <div style={styles.dayHeader}>
               <div style={styles.dayHeaderText}>
                 <span style={styles.dayName}>
-                  {day} {isToday && "(Today)"}
+                  {day}
+                  {isToday && <span aria-hidden="true" style={styles.todayDot} />}
                 </span>
                 {!!workout?.title?.trim() && (
                   <span style={styles.daySubheading}>{workout.title.trim()}</span>
@@ -95,6 +102,8 @@ const styles = {
     border: "1px solid var(--border)",
     background: "var(--card)",
     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.2)",
+    position: "relative",
+    overflow: "hidden",
   },
   today: {
     border: "1px solid rgba(56, 255, 150, 0.72)",
@@ -111,8 +120,45 @@ const styles = {
     gap: "2px",
   },
   dayName: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
     fontWeight: 700,
     fontSize: "14px",
+  },
+  todayDot: {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    background: "#7effbf",
+    boxShadow: "0 0 0 3px rgba(126, 255, 191, 0.14), 0 0 10px rgba(126, 255, 191, 0.52)",
+    animation: "pulseDot 2.8s ease-in-out infinite",
+  },
+  todaySweep: {
+    position: "absolute",
+    top: "-18%",
+    left: 0,
+    width: "52%",
+    height: "140%",
+    background:
+      "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent)",
+    transform: "translateX(-220%) skewX(-20deg)",
+    mixBlendMode: "screen",
+    opacity: 0.65,
+    animation: "shineSweep 14s cubic-bezier(0.3, 0, 0.2, 1) infinite",
+    pointerEvents: "none",
+    zIndex: 0,
+  },
+  todayCornerMark: {
+    position: "absolute",
+    top: "0",
+    right: "0",
+    width: "58px",
+    height: "58px",
+    background:
+      "radial-gradient(circle at 100% 0%, rgba(126, 255, 191, 0.42), rgba(126, 255, 191, 0.03) 68%, transparent 76%)",
+    pointerEvents: "none",
+    zIndex: 0,
   },
   daySubheading: {
     fontSize: "12px",
