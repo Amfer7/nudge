@@ -14,7 +14,9 @@ import WorkoutEditor from "../components/WorkoutEditor";
 import InfoSection from "../components/InfoSection";
 import SettingsPanel from "../components/SettingsPanel";
 import { useStreakPreferences } from "../hooks/useStreakPreferences";
+import { useReminders } from "../hooks/useReminders";
 import StreakPreferences from "../components/StreakPreferences";
+import RemindersSection from "../components/RemindersSection";
 import WelcomeBack from "../components/WelcomeBack";
 import BlockDatesOverlay from "../components/BlockDatesOverlay";
 import WhatsNewCard from "../components/WhatsNewCard";
@@ -39,11 +41,15 @@ function AppShell() {
     setDayOffset,
     todayKey,
     devSummary,
+    displayRecords,
   } = useDayRecords(restDays);
 
   // ---- workouts ----
   const { workouts, updateWorkout } = useWorkouts();
   const { completed, toggleExercise } = useExerciseCompletion();
+
+  // ---- local daily reminder ----
+  const reminders = useReminders();
 
   const todayIndex = new Date().getDay(); // 0 = Sunday
   const [editingDay, setEditingDay] = useState(null);
@@ -280,7 +286,7 @@ function AppShell() {
           <div style={styles.blockTitle}>Planned time off</div>
           <div style={styles.blockDesc}>
             Going to be away or unable to train?
-            Block dates ahead of time so your streak isn't affected. (Must be after 48 hours)
+            Block dates ahead of time so your streak isn't affected. (Must be at least 2 days ahead)
           </div>
           <div style={styles.blockMeta}>
             {upcomingBlockedKeys.length === 0 ? (
@@ -305,7 +311,7 @@ function AppShell() {
       <CalendarOverlay
         visible={calendarOpen}
         onClose={() => setCalendarOpen(false)}
-        dayRecords={dayRecords}
+        dayRecords={displayRecords}
         freezeVisibility={freezeVisibility}
         restDays={restDays}
         anchorDateKey={todayKey}
@@ -327,6 +333,14 @@ function AppShell() {
             onChange={setFreezeVisibility}
             restDays={restDays}
             onSaveRestDays={setRestDays}
+          />
+          <RemindersSection
+            enabled={reminders.enabled}
+            hour={reminders.hour}
+            permission={reminders.permission}
+            supported={reminders.supported}
+            onToggle={reminders.setEnabled}
+            onHourChange={reminders.setHour}
           />
           <WhatsNewCard />
           <InfoSection />

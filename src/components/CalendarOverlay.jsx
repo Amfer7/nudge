@@ -1,5 +1,5 @@
 ﻿import { toDateKey, isRestDay } from "../utils/dateUtils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 
 function CalendarOverlay({
@@ -22,10 +22,19 @@ function CalendarOverlay({
 
   const [viewDate, setViewDate] = useState(getAnchorMonthStart);
 
-  useEffect(() => {
-    if (!visible) return;
-    setViewDate(getAnchorMonthStart());
-  }, [visible, anchorDateKey]);
+  // Snap back to the anchor month whenever the sheet (re)opens or the anchor
+  // changes while it is open. Adjusting state during render is React's
+  // recommended alternative to a synchronizing effect here.
+  const [syncedKey, setSyncedKey] = useState(visible ? anchorDateKey ?? "" : null);
+  if (visible) {
+    const key = anchorDateKey ?? "";
+    if (key !== syncedKey) {
+      setSyncedKey(key);
+      setViewDate(getAnchorMonthStart());
+    }
+  } else if (syncedKey !== null) {
+    setSyncedKey(null);
+  }
 
   if (!visible) return null;
 

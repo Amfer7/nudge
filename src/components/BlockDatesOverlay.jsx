@@ -9,17 +9,17 @@ function BlockDatesOverlay({
   onBlock,
   onUnblock,
 }) {
-  if (!visible) return null;
-
-  const today = new Date();
-  const minDate = new Date();
-  minDate.setDate(today.getDate() + 1); // rule enforced
-
    const [viewDate, setViewDate] = useState(() => {
     const d = new Date();
     d.setDate(1);
     return d;
     });
+
+  if (!visible) return null;
+
+  const today = new Date();
+  const minDate = new Date();
+  minDate.setDate(today.getDate() + 2); // earliest blockable date is 2 days ahead
 
     const year = viewDate.getFullYear();
     const month = viewDate.getMonth();
