@@ -1,0 +1,214 @@
+================================================================================
+NUDGE - CODE REVIEW & PRE-DATABASE FOUNDATION ROADMAP
+================================================================================
+Date: 2026-08-03
+Scope: (1) Review of fundamental app logic. (2) Ordered roadmap of foundation
+       work to complete BEFORE the database/auth/leaderboard migration in
+       plan.md. Goal: tie up all loose ends so the backend drops into a clean,
+       typed, abstracted, PWA-ready foundation.
+
+--------------------------------------------------------------------------------
+PART 1 - STATUS
+--------------------------------------------------------------------------------
+- Created CLAUDE.md (guidance file). Corrections already noted there:
+    * Blocked-dates "48 hours" copy is WRONG; enforced rule is "tomorrow onward"
+      (BlockDatesOverlay minDate = today + 1). Copy is inconsistent app-wide.
+    * PRSection is self-contained/stateful (own localStorage nudge_pr_cards_v1),
+      not presentational.
+    * `npm run lint` currently FAILS on unmodified main (10 errors / 3 warnings).
+- plan.md holds the DATABASE migration (Supabase, optional auth, friends
+  leaderboard via invite code/QR). This file = the work that comes FIRST.
+
+NOTE: Step 0 (Part 3) is DONE (2026-08-03): selectors.js deleted,
+      BlockDatesOverlay hook-order fixed, blocked-dates rule reconciled to
+      "2+ days ahead" (minDate = today + 2). Tests 5/5 pass; lint 13->12
+      problems (10->9 errors; the BlockDatesOverlay rules-of-hooks error is
+      cleared).
+      Step 1 (Part 3) is DONE (2026-08-03): added typescript + typescript-eslint,
+      tsconfig.json (allowJs/checkJs:false for JS coexistence), src/vite-env.d.ts,
+      a `typecheck` script, a TS block in eslint.config.js, and converted
+      src/app/version.js -> version.ts as the canary. Verified: typecheck exit 0,
+      lint still 12 problems (no new errors), tests 5/5, `npm run build` OK.
+      Step 2 (Part 3) is DONE (2026-08-03): created src/lib/streakEngine.ts
+      (pure computeState + moved calculateStreak/hasSix/evaluateFreezeSpend),
+      rewrote useDayRecords.js to derive freezes (removed meta, both mutating
+      effects, and the undo special-case; exposes displayRecords for the
+      calendar). CalendarOverlay now fed derived freezes via AppShell. Old JS
+      test ported to src/lib/streakEngine.test.ts (10 tests, incl. new
+      computeState cases); test script runs TS via `node --experimental-strip-types
+      --test`; added @types/node. Verified: typecheck exit 0, tests 10/10, build
+      OK, lint 9->7 errors (the two freeze set-state-in-effect errors removed; the
+      remaining 7 are the hydrate pattern for Step 3). No manual useMemo (React
+      Compiler handles it).
+      Step 3 (Part 3) is DONE (2026-08-03): added a typed repository layer
+      (src/lib/repo/{types.ts,localRepo.ts,index.ts}) — a synchronous Repository
+      interface + localRepo implementation that owns ALL localStorage keys and
+      defensive parsing (sanitize freezes, normalizeRestDays, defaults). Refactored
+      all five persistence hooks (useDayRecords, useStreakPreferences, useWorkouts,
+      useTheme, useExerciseCompletion) to hydrate via a lazy useState(() =>
+      repo.getX()) initializer and persist via repo.saveX in an effect — return
+      shapes IDENTICAL, so AppShell/components are untouched. Also cleared the two
+      non-hydrate set-state-in-effect errors: CalendarOverlay now resets the viewed
+      month during render (React's adjust-state-during-render pattern, no effect;
+      also removes the exhaustive-deps warning) and StreakHero lets its rAF tick
+      drive the count-up instead of a synchronous setState. Verified: typecheck exit
+      0, tests 10/10, build OK, and `npm run lint` is now GREEN (0 problems, down
+      from the 7-error/1-warning baseline). Steps 4-5 remain planned, not done.
+
+--------------------------------------------------------------------------------
+PART 2 - REVIEW OF THE FUNDAMENTAL LOGIC (rationale for the roadmap)
+--------------------------------------------------------------------------------
+VERDICT
+- Data model (dayRecords: "YYYY-MM-DD" -> {status: logged|freeze|blocked}):
+  sound and appropriately simple. Keep it.
+- Efficiency: a non-issue at this scale (~3,600 entries for 10 yrs). Do NOT
+  optimize. Any waste (recompute per render) is microseconds - cleanliness only.
+- Architecture: one real weakness - freezes are DERIVED-BUT-STORED, kept in sync
+  via two mutating useEffects. Symptoms: cascading renders (the
+  set-state-in-effect lint errors), multi-pass settling, two sources of truth
+  (freezeCount in meta vs {status:freeze} in dayRecords) that force undo to
+  special-case the earn day, and rule changes not reconciling.
+- FIX: make dayRecords (logged + blocked only) the SINGLE source of truth and
+  compute streak + freezes as a pure function on render. This also makes cloud
+  sync easy (sync the raw log, not derived state) and lets ONE engine be reused
+  client-side and in the future server cron.
+
+FRAMEWORK DECISION (from design chat)
+- Next.js: REJECTED for this app. It is offline-first / anonymous-first, so SSR
+  and server components buy little (anonymous data lives in localStorage the
+  server can't see) while adding complexity; Supabase already provides the
+  backend. Keep the Vite SPA; add a router for the routes we need.
+- TypeScript + PWA + a real data/server-state layer: RECOMMENDED. These add
+  capability the product actually needs and are where complexity is growing.
+
+--------------------------------------------------------------------------------
+PART 3 - PRE-DATABASE FOUNDATION ROADMAP (DO IN THIS ORDER)
+--------------------------------------------------------------------------------
+
+STEP 0 - Safe cleanups (independent; do first, zero-to-minimal risk)  [DONE]
+  0a. DELETE src/app/selectors.js (dead, buggy `getWeek?.()` fallback, contradicts
+      live logic).
+  0b. FIX BlockDatesOverlay Rules-of-Hooks bug: move `if (!visible) return null`
+      (line ~12) BELOW the useState call (line ~18). Component is always mounted
+      by AppShell, so hook count currently changes 0<->1 when the sheet opens.
+  0c. RECONCILE blocked-dates copy: AppShell "Must be after 48 hours", overlay
+      footer "2+ days ahead", and code "tomorrow onward (1+ day)" disagree.
+      Pick one truth and make all three match.
+  Depends on: nothing.
+
+STEP 1 - TypeScript foundation (incremental, NOT big-bang)  [DONE]
+  - Add tsconfig.json with `allowJs: true` + strict, so .ts/.tsx and .js coexist.
+    Vite compiles TS with no extra config; @types/react[-dom] already present.
+  - Policy: author ALL NEW code in TS; convert existing files opportunistically,
+    prioritizing logic-heavy modules (engine, hooks, repos) before the DB work.
+  - Later, Supabase can GENERATE row/RPC types - the biggest payoff, so the DB
+    layer is typed end to end.
+  Why: highest-leverage correctness tool as DB/auth/sync/social shapes arrive.
+  Depends on: nothing, but should precede Step 2 so the engine is authored in TS.
+
+STEP 2 - Derived streak engine in TypeScript (the freeze refactor, upgraded)  [DONE]
+  - Create src/lib/streakEngine.ts exporting:
+        computeState(log, restDays, today) ->
+          { currentStreak, longestStreak, availableFreezes,
+            frozenDays: Set<dateKey>, lastLoggedDate }
+    Move the pure fns from useDayRecords.js (calculateStreak,
+    hasSixConsecutiveLoggedDays, evaluateFreezeSpend) into it.
+  - Remove the two mutating useEffects and the undo special-case in
+    useDayRecords.js; compute freezes via useMemo(computeState(...)).
+  - On read, IGNORE legacy {status:"freeze"} records (only logged/blocked are
+    source of truth) - matters for existing localStorage users AND the future
+    localStorage->cloud migration.
+  - Calendar reads frozen days from the derived frozenDays set.
+  - Keep useDayRecords.test.js green (convert to .ts); add computeState tests.
+  Why: single typed source of truth reused by client + future server cron; kills
+  the effect cascade and the freeze-related set-state-in-effect lint errors.
+  Depends on: Step 1.
+
+STEP 3 - Data-access (repository) abstraction - LOCAL implementation  [DONE]
+  - Define a typed Repository interface for the day log + prefs (extendable to
+    workouts/PRs). Implement localRepo (today's localStorage behavior) behind it.
+  - Refactor hooks (useDayRecords, useStreakPreferences, useWorkouts, ...) to
+    read/write through the active repo. Keep hook return shapes IDENTICAL so
+    components and AppShell wiring are untouched.
+  - While here, fix the hydrate pattern: read initial state via a lazy
+    useState(() => ...) initializer (or inside the repo) instead of
+    setState-in-a-mount-effect. This clears the REMAINING set-state-in-effect
+    lint errors (useWorkouts/useTheme/etc.) -> lint goes green.
+  Why: this is the exact seam Supabase slots into later (supabaseRepo) with zero
+  UI churn; also finishes the lint cleanup.
+  Depends on: Step 2.
+
+STEP 4 - PWA: installable, offline, reminders (orthogonal - may run parallel 1-3)  [DONE]
+  DONE (2026-08-03): added vite-plugin-pwa (registerType 'autoUpdate',
+  injectRegister 'auto') in vite.config.js with a full web app manifest (name
+  "Nudge", theme_color #2cff05, background #0b1410, standalone, portrait) and a
+  Workbox service worker precaching the app shell (navigateFallback index.html) —
+  the app is now installable + offline. Generated a square PNG icon set
+  (64/192/512 + maskable-512 + apple-touch-180) from public/logo.jpg composited on
+  a dark brand canvas (portrait logo, so contain-fit not crop) into public/.
+  Scaffolded LOCAL daily reminders: src/lib/notifications.ts (support/permission
+  wrappers + pure, unit-tested msUntilNextDaily), src/hooks/useReminders.ts (arms
+  a daily setTimeout while the app is open; requests permission on enable), and a
+  RemindersSection toggle in Settings. The reminder pref persists through the Step 3
+  repository seam (new ReminderPrefs domain, key nudge_reminders). True background
+  push (app closed) is deferred to the DB phase (needs identity + push tokens).
+  Added dev-dist to .gitignore. Verified: typecheck exit 0, tests 13/13 (added 3
+  notification tests), lint GREEN, build OK (sw.js + manifest.webmanifest emitted,
+  20 precache entries). Step 5 remains planned, not done.
+  - Add vite-plugin-pwa: web app manifest (name "Nudge", icons from existing
+    logo.jpg, theme-color #2cff05 already in index.html) + service worker for
+    offline caching.
+  - Installable + offline reinforces the offline-first identity.
+  - Scaffold LOCAL daily streak-reminder notifications (Notification API). True
+    server-driven push is deferred to the DB phase (needs user identity/tokens).
+  Why: most on-brand product win for a streak app literally named "Nudge".
+  Depends on: nothing functionally (do config in TS, so after Step 1 ideally).
+
+STEP 5 - Server-state layer SCAFFOLD (bridges into the DB phase)  [DONE]
+  DONE (2026-08-03): installed @tanstack/react-query; added a shared queryClient
+  (src/lib/queryClient.ts, offline-first defaults: 5-min staleTime, no
+  refetch-on-focus, 1 retry) and wrapped the app in QueryClientProvider via a new
+  src/app/Providers.jsx (mounted in main.jsx around <App/>; future
+  AuthProvider/SyncProvider nest here). Defined the ASYNC repository contract
+  (AsyncRepository in src/lib/repo/types.ts) that supabaseRepo will implement, plus
+  asyncLocalRepo (a Promise wrapper over localRepo) exported as `asyncRepo` from
+  the repo barrel so the Query layer can be exercised offline. No query/mutation
+  hooks yet by design — there is no server state until the backend exists; those
+  are authored with Supabase in plan.md Phase 1. Verified: typecheck exit 0, tests
+  13/13, lint GREEN, build OK.
+  - Install TanStack Query; wrap the app in QueryClientProvider.
+  - Define the ASYNC Repository contract that supabaseRepo will implement
+    (mirrors the localRepo interface from Step 3, but async).
+  - IMPORTANT: the real Query hooks against Supabase (caching, optimistic
+    updates, retry/offline) are authored WITH the DB in plan.md Phase 1 - there
+    is no server state to manage until the backend exists. Pre-DB, this step only
+    lands the provider + typed async contract so Phase 1 is drop-in.
+  Why: right-sized data-flow architecture; where real complexity is growing.
+  Depends on: Step 3.
+
+--------------------------------------------------------------------------------
+PART 4 - HAND-OFF BOUNDARY (what plan.md picks up)
+--------------------------------------------------------------------------------
+STATUS: Steps 0-5 are all [DONE] (2026-08-03). The pre-database foundation is
+complete — the roadmap below is the hand-off into plan.md.
+
+After Steps 0-5 the foundation is: typed, single derived streak engine,
+repo-abstracted, lint-clean, PWA, and query-provider ready. plan.md then:
+  Phase 1: supabaseRepo (async), TanStack Query hooks, Google + email/password
+           auth, schema + RLS, anonymous-first sync, localStorage->cloud migration.
+  Phase 2: friends via invite code + QR, /add/:code redeem, current-streak
+           leaderboard; nightly Edge Function REUSES src/lib/streakEngine.ts.
+  Phase 3: sync workouts/PRs, in-app QR scanner, server push notifications,
+           extra leaderboard metrics.
+
+--------------------------------------------------------------------------------
+PART 5 - LINT BASELINE (unmodified main) - what these steps clear
+--------------------------------------------------------------------------------
+`npm run lint` => 13 problems (10 errors, 3 warnings). Notable:
+  - BlockDatesOverlay 18:36  react-hooks/rules-of-hooks   -> cleared by Step 0b
+  - useWorkouts/useDayRecords set-state-in-effect (freeze) -> cleared by Step 2
+  - other hooks set-state-in-effect (hydrate idiom)        -> cleared by Step 3
+  - CalendarOverlay/StreakHero set-state-in-effect         -> cleared by Step 3
+  - CalendarOverlay exhaustive-deps (getAnchorMonthStart)  -> cleared by Step 3
+RESULT after Steps 0-3: `npm run lint` is GREEN (0 problems).
+================================================================================

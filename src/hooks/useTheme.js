@@ -1,21 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-
-const STORAGE_KEY = "fitness_theme";
+import { useEffect, useState } from "react";
+import { repo } from "../lib/repo";
 
 export function useTheme() {
-  const [theme, setTheme] = useState("dark");
-  const hydrated = useRef(false);
+  // Hydrate once via a lazy initializer.
+  const [theme, setTheme] = useState(() => repo.getTheme());
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) setTheme(stored);
-    hydrated.current = true;
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated.current) return;
-
-    localStorage.setItem(STORAGE_KEY, theme);
+    repo.saveTheme(theme);
 
     const root = document.documentElement;
 

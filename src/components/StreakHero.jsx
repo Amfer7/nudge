@@ -20,11 +20,8 @@ function StreakHero({ streak, docked, scrollProgress = 0 }) {
     const from = startRef.current;
     const to = streak;
 
-    if (from === to) {
-      setDisplayed(to);
-      return;
-    }
-
+    // No synchronous setState here — the rAF tick below drives the value to
+    // `to` (and covers snapping back after an interrupted animation).
     const duration = 520;
     const startedAt = performance.now();
 
