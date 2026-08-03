@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import { useSync } from "../providers/SyncProvider";
 import { useFriends, useRedeemInvite } from "../hooks/useFriends";
+import { rankStreaks } from "../lib/streakRanking";
 import InviteQR from "./InviteQR";
 
 // Friends: your invite QR/code, an add-a-friend box, and the friends list with
@@ -18,6 +19,16 @@ function FriendsOverlay({ visible, onClose, onOpenSettings }) {
   if (!visible) return null;
 
   const signedIn = configured && user && profile;
+
+  // Standings: my own row folded in with friends, sorted by streak.
+  const myRow = profile
+    ? {
+        id: profile.id,
+        username: profile.username,
+        current_streak: profile.current_streak,
+      }
+    : null;
+  const rankedRows = friends.data ? rankStreaks(myRow, friends.data) : [];
 
   async function handleAdd(e) {
     e.preventDefault();
@@ -90,22 +101,31 @@ function FriendsOverlay({ visible, onClose, onOpenSettings }) {
             </form>
 
             <div style={styles.listWrap}>
-              <div style={styles.title}>Your friends</div>
+              <div style={styles.title}>Standings</div>
               {friends.isLoading && <div style={styles.muted}>Loading…</div>}
               {friends.isError && (
                 <div style={styles.error}>Couldn't load friends — retry.</div>
               )}
+              {rankedRows.map((r) => (
+                <div
+                  key={r.id}
+                  style={{
+                    ...styles.friendRow,
+                    ...(r.isMe ? styles.selfRow : {}),
+                  }}
+                >
+                  <span style={styles.handle}>
+                    @{r.username}
+                    {r.isMe && <span style={styles.youTag}> (you)</span>}
+                  </span>
+                  <span style={styles.streak}>🔥 {r.current_streak}</span>
+                </div>
+              ))}
               {friends.data && friends.data.length === 0 && (
                 <div style={styles.muted}>
                   No friends yet — share your code above.
                 </div>
               )}
-              {friends.data?.map((f) => (
-                <div key={f.id} style={styles.friendRow}>
-                  <span style={styles.handle}>@{f.username}</span>
-                  <span style={styles.streak}>🔥 {f.current_streak}</span>
-                </div>
-              ))}
             </div>
           </div>
         )}
@@ -185,7 +205,12 @@ const styles = {
     borderRadius: "10px",
     border: "1px solid var(--border)",
   },
+  selfRow: {
+    border: "1px solid rgba(45, 255, 196, 0.55)",
+    background: "rgba(7, 22, 14, 0.45)",
+  },
   handle: { fontWeight: 600, color: "var(--text)" },
+  youTag: { color: "var(--text-muted)", fontWeight: 400, fontSize: "13px" },
   streak: { color: "var(--text-muted)", fontVariantNumeric: "tabular-nums" },
   muted: { fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.45 },
   notice: { fontSize: "13px", color: "var(--text)" },
