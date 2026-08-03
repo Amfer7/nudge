@@ -7,16 +7,16 @@ function WhatsNewCard() {
 
       <ul style={styles.list}>
         <li>
-          You can now choose your own rest days in Settings (up to 3), with Sunday as the default.
+          Cloud sync is here! Sign in from Settings to back up your streak and sync it across devices.
         </li>
         <li>
-          Rest-day changes apply directly to streak logic, so selected rest days are neutral when unlogged.
+          Sign in with Google or an email and password &mdash; totally optional. Nudge still works fully offline if you never sign in.
         </li>
         <li>
-          Added PR Tracker cards so you can log and grow your personal records.
+          Pick a username on first sign-in and get a personal invite code, ready for friends and leaderboards in an upcoming update.
         </li>
         <li>
-          PR cards now include the same premium shine effect used across the main UI.
+          Your data stays private: only you can ever see your day log.
         </li>
         <li>
           Various UI tweaks and optimizations to make the experience smoother and more polished.
