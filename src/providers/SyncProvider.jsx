@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { queryClient } from "../lib/queryClient";
 import { useAuth } from "./AuthProvider";
 import { localRepo } from "../lib/repo/localRepo";
 import { supabaseRepo } from "../lib/repo/supabaseRepo";
@@ -10,6 +11,8 @@ import {
   updateDenormalizedStreak,
   updateProfilePrefs,
 } from "../lib/profiles";
+import { redeemInvite } from "../lib/friends";
+import { getPendingInvite, clearPendingInvite } from "../lib/pendingInvite";
 import { computeState } from "../lib/streakEngine";
 import { toDateKey } from "../utils/dateUtils.js";
 
@@ -101,6 +104,22 @@ export function SyncProvider({ children }) {
     setRemountKey((k) => k + 1);
   }
 
+  // If the user arrived via /add/:code while signed out, a code was stashed.
+  // Redeem it once now that we're synced, then clear it regardless so a bad
+  // link can't wedge every future sign-in.
+  async function redeemPending() {
+    const code = getPendingInvite();
+    if (!code) return;
+    try {
+      await redeemInvite(code);
+      void queryClient.invalidateQueries({ queryKey: ["friends"] });
+    } catch (e) {
+      console.error("[sync] pending invite redeem failed", e);
+    } finally {
+      clearPendingInvite();
+    }
+  }
+
   useEffect(() => {
     // All state updates live inside this async IIFE (not the effect body) so we
     // synchronize with the external auth system without cascading renders.
@@ -136,6 +155,7 @@ export function SyncProvider({ children }) {
         setProfile(myProfile);
         await activateSync(myProfile);
         if (cancelled) return;
+        await redeemPending();
         setStatus("synced");
       } catch (e) {
         console.error("[sync] activation failed", e);
@@ -159,6 +179,7 @@ export function SyncProvider({ children }) {
       const created = await createProfile(username);
       setProfile(created);
       await activateSync(created);
+      await redeemPending();
       setStatus("synced");
     } catch (e) {
       setError(e);
