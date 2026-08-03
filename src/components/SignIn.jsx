@@ -194,7 +194,7 @@ function SignIn() {
       {inviteCode && (
         <div style={styles.muted}>
           Your invite code: <span style={styles.code}>{inviteCode}</span>{" "}
-          <span style={styles.dim}>(friends & QR arrive in the next update)</span>
+          <span style={styles.dim}>(share it from the Friends screen)</span>
         </div>
       )}
 

@@ -19,6 +19,7 @@ import StreakPreferences from "../components/StreakPreferences";
 import RemindersSection from "../components/RemindersSection";
 import WelcomeBack from "../components/WelcomeBack";
 import BlockDatesOverlay from "../components/BlockDatesOverlay";
+import FriendsOverlay from "../components/FriendsOverlay";
 import WhatsNewCard from "../components/WhatsNewCard";
 import SignIn from "../components/SignIn";
 import { APP_NAME, APP_VERSION } from "./version";
@@ -64,6 +65,7 @@ function AppShell() {
   const [docked, setDocked] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [blockPickerOpen, setBlockPickerOpen] = useState(false);
+  const [friendsOpen, setFriendsOpen] = useState(false);
 
   function formatDateKey(dateKey) {
     const [year, month, day] = String(dateKey).split("-").map(Number);
@@ -306,6 +308,14 @@ function AppShell() {
         >
           Block dates
         </button>
+
+        {/* Placement is intentionally rough — the UI will be rearranged later. */}
+        <button
+          style={styles.blockButton}
+          onClick={() => setFriendsOpen(true)}
+        >
+          Friends
+        </button>
       </section>
 
       {/* Calendar overlay */}
@@ -324,6 +334,12 @@ function AppShell() {
          dayRecords={dayRecords}
           onBlock={blockDates}
           onUnblock={unblockDate}
+      />
+
+      <FriendsOverlay
+        visible={friendsOpen}
+        onClose={() => setFriendsOpen(false)}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
 
       {settingsOpen && (
