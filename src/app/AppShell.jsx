@@ -20,6 +20,7 @@ import RemindersSection from "../components/RemindersSection";
 import WelcomeBack from "../components/WelcomeBack";
 import BlockDatesOverlay from "../components/BlockDatesOverlay";
 import WhatsNewCard from "../components/WhatsNewCard";
+import SignIn from "../components/SignIn";
 import { APP_NAME, APP_VERSION } from "./version";
 
 function AppShell() {
@@ -327,6 +328,7 @@ function AppShell() {
 
       {settingsOpen && (
         <SettingsPanel onClose={() => setSettingsOpen(false)}>
+          <SignIn />
           <ThemeSelector theme={theme} onChange={setTheme} />
           <StreakPreferences
             freezeVisibility={freezeVisibility}
