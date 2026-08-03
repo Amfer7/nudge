@@ -131,9 +131,13 @@ export function SyncProvider({ children }) {
         return;
       }
 
-      // Signed out: tear the sink down, go back to local-only.
+      // Signed out: tear the sink down, go back to local-only. Evict cached
+      // server state (the shared queryClient is a module singleton with a long
+      // gcTime) so a different user signing in on this session can never see
+      // the previous user's friends before the refetch.
       if (!user) {
         setSyncSink(null);
+        queryClient.removeQueries({ queryKey: ["friends"] });
         setStatus("local");
         setInviteCode(null);
         setProfile(null);
