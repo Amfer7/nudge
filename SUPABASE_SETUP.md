@@ -86,10 +86,17 @@ projects; if you see a 404 on `/auth/callback`, add a `vercel.json`:
 - **Migration:** log some days offline, then sign in → those days appear in
   `day_logs`.
 
-## Still local-only (Phase 2 / Phase 3)
-- Friends list, QR, the `/add/:code` redeem UI, and the leaderboard (Phase 2).
-- The nightly `recompute-streaks` Edge Function (Phase 2).
-- Syncing workouts / PRs / exercise-completion (Phase 3).
+## Friends + invite (Phase 2, part 1 — shipped)
+- The **Friends** overlay: your invite QR/code with copy/share, an add-a-friend
+  box, and your friends list (each friend's `@username` + current streak).
+- The `/add/:code` deep link: opening a shared invite redeems it; if you're
+  signed out it's stashed and auto-redeemed once you sign in.
+- Uses the Phase-1 plumbing (`friendships`, `invite_codes`, `redeem_invite`) —
+  no new migration required.
 
-The database plumbing they need (`friendships`, `invite_codes`,
-`redeem_invite`) is already created by these migrations.
+## Still local-only (Phase 2 rest / Phase 3)
+- The friends **leaderboard** (ranked view) — separate spec.
+- The nightly `recompute-streaks` Edge Function (`current_streak` is currently
+  recomputed on every sync, which keeps friends' streaks live without it).
+- Unfriend (needs a new `friendships` DELETE policy / RPC).
+- Syncing workouts / PRs / exercise-completion (Phase 3).
